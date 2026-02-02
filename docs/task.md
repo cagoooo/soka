@@ -1,0 +1,36 @@
+# Task List: Soka 2026 Education EXPO Registration
+
+- [x] Planning & Setup <!-- id: 0 -->
+    - [x] Create project artifacts (task.md, implementation_plan.md) <!-- id: 1 -->
+    - [x] Initialize Vite React + TypeScript project in `H:/Soka` <!-- id: 2 -->
+    - [x] Configure Environment Variables (`.env`) for Firebase <!-- id: 3 -->
+    - [x] Initialize Firebase (SDK & CLI setup) <!-- id: 4 -->
+- [/] Core Logic & Backend <!-- id: 5 -->
+- [x] Core Logic & Backend <!-- id: 5 -->
+    - [x] Design Firestore Data Schema (`slots`, `bookings`) <!-- id: 6 -->
+    - [x] Implement Firebase Initialization logic <!-- id: 7 -->
+    - [x] Implement Authentication (Anonymous/Google) to satisfy security rules <!-- id: 8 -->
+    - [x] Create Services for fetching slots and submitting registrations <!-- id: 9 -->
+- [x] UI/UX Implementation <!-- id: 10 -->
+    - [x] Create Global Layout (RWD, Glassmorphism background) <!-- id: 11 -->
+    - [x] Implement Session Selection Component (A/B/C/D logic) <!-- id: 12 -->
+    - [x] Implement Real-time Counter Display <!-- id: 13 -->
+    - [x] Implement Registration Form (User details) <!-- id: 14 -->
+    - [x] Implement Conflict/Constraint Logic (UI feedback) <!-- id: 15 -->
+- [x] Verification & Deployment <!-- id: 16 -->
+    - [x] Test Booking Logic (A+B, C-only, D-only) <!-- id: 17 -->
+    - [x] Verify Mobile Responsiveness <!-- id: 18 -->
+    - [x] Check Security Rules & API Key Constraints <!-- id: 19 -->
+    - [x] Build & Deploy (Firebase Hosting/GitHub Pages) <!-- id: 20 -->
+
+- [x] **Real-time & PWA**
+    - [x] Verify Real-time Slot Updates (Confirmed `onSnapshot` usage)
+    - [x] Install & Configure `vite-plugin-pwa`
+    - [x] Create App Icons (SVG Fallback)
+    - [x] Register Service Worker (Auto-update config)
+- [x] **Live Operations Support**
+    - [x] Update Session Titles & Descriptions from HTML Source
+    - [x] Implement Digital Ticket (QR Code)
+    - [x] Implement Digital Ticket Image Download
+    - [x] Implement Device Restriction (One Ticket per Browser)
+    - [x] Implement Pre-submission Confirmation (Session Summary & Device Warning)
