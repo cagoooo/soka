@@ -55,6 +55,10 @@ export const AdminDashboard = () => {
         XLSX.writeFile(wb, `Soka_Expo_Bookings_${format(new Date(), 'yyyyMMdd_HHmm')}.xlsx`);
     };
 
+    if (loading) {
+        return <div style={{ textAlign: 'center', padding: '50px' }}>載入中...</div>;
+    }
+
     return (
         <div style={{ textAlign: 'left', width: '100%' }}>
 
