@@ -61,13 +61,19 @@ export const submitBooking = async (selection: BookingState, userDetails: UserDe
     return bookingRef.id;
 };
 
-export interface BookingRecord extends UserDetails {
-    id: string;
+export interface BookingRecord {
+    id: string; // Firestore Document ID
+    bookingId: string; // Human-readable ID (e.g. SOKA-2026-XYZ)
+    name: string;
+    phone: string;
+    studentId?: string; // Optional for compatibility with old records
+    department?: string; // Optional for compatibility with old records
     slots: string[];
     timestamp: any;
-    status: string;
-    // We might want to include expanded slot details later, but for now IDs are stored
+    status: 'confirmed' | 'cancelled';
 }
+// We might want to include expanded slot details later, but for now IDs are stored
+
 
 import { getDocs, query, orderBy } from 'firebase/firestore';
 
@@ -81,13 +87,14 @@ export const getAllBookings = async (): Promise<BookingRecord[]> => {
         const data = doc.data();
         return {
             id: doc.id,
-            name: data.userName,
-            phone: data.userPhone,
-            email: data.userEmail || '',
+            bookingId: data.bookingId || 'UNKNOWN',
+            name: data.name || 'Unknown',
+            phone: data.phone || '',
             studentId: data.studentId || '',
+            department: data.department || '',
             slots: data.slots || [],
             timestamp: data.timestamp,
-            status: data.status || 'unknown'
+            status: (data.status as 'confirmed' | 'cancelled') || 'confirmed'
         } as BookingRecord;
     });
 };

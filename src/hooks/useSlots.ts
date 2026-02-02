@@ -13,8 +13,12 @@ export const useSlots = () => {
             const data = snapshot.docs.map(doc => doc.data() as SessionSlot);
             setSlots(data);
             setLoading(false);
+        }, (error) => {
+            console.error("Error fetching real-time slots:", error);
+            setLoading(false);
         });
 
+        // Cleanup subscription on unmount
         return () => unsubscribe();
     }, []);
 

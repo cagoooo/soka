@@ -35,3 +35,14 @@
     - [x] Implement Digital Ticket Image Download
     - [x] Implement Device Restriction (One Ticket per Browser)
     - [x] Implement Pre-submission Confirmation (Session Summary & Device Warning)
+
+- [/] **Phase 2: Administrative & Marketing**
+    - [ ] **Admin Dashboard: Excel Export** <!-- id: 23 -->
+        - [ ] Create `exportToExcel` utility using `xlsx` <!-- id: 24 -->
+        - [ ] Add "Download Excel" button to Admin Dashboard <!-- id: 25 -->
+    - [ ] **Social Media Optimization (SEO)** <!-- id: 26 -->
+        - [ ] Generate/Add `og:image` to public folder <!-- id: 27 -->
+        - [ ] Update `index.html` with Open Graph meta tags <!-- id: 28 -->
+    - [ ] **Real-time UX** <!-- id: 29 -->
+        - [ ] Refactor `useSlots` to use `onSnapshot` listener <!-- id: 30 -->
+        - [ ] Verify concurrent update behavior <!-- id: 31 -->

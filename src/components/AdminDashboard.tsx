@@ -41,17 +41,35 @@ export const AdminDashboard = () => {
 
     // 2. Excel Export Logic
     const handleExport = () => {
-        const exportData = bookings.map(b => ({
-            姓名: b.name,
-            電話: b.phone,
-            報名時間: b.timestamp?.toDate ? format(b.timestamp.toDate(), 'yyyy-MM-dd HH:mm:ss') : 'N/A',
-            選課ID: b.slots.join(', '),
-            狀態: b.status
-        }));
+        if (bookings.length === 0) {
+            alert("目前沒有報名資料可匯出");
+            return;
+        }
+
+        const exportData = bookings.map(b => {
+            // Safe date formatting
+            let dateStr = 'N/A';
+            if (b.timestamp && typeof b.timestamp.toDate === 'function') {
+                dateStr = format(b.timestamp.toDate(), 'yyyy-MM-dd HH:mm:ss');
+            } else if (b.timestamp) {
+                // Fallback if timestamp is serializable (e.g. from local debug)
+                dateStr = String(b.timestamp);
+            }
+
+            return {
+                姓名: b.name,
+                學號: b.studentId, // Added Student ID
+                系級: b.department, // Added Department
+                電話: b.phone,
+                報名時間: dateStr,
+                選課ID: b.slots.join(', '),
+                狀態: '已報名' // Hardcoded for simplified version
+            };
+        });
 
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Bookings");
+        XLSX.utils.book_append_sheet(wb, ws, "報名名單");
         XLSX.writeFile(wb, `Soka_Expo_Bookings_${format(new Date(), 'yyyyMMdd_HHmm')}.xlsx`);
     };
 
