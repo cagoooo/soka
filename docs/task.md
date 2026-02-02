@@ -5,7 +5,6 @@
     - [x] Initialize Vite React + TypeScript project in `H:/Soka` <!-- id: 2 -->
     - [x] Configure Environment Variables (`.env`) for Firebase <!-- id: 3 -->
     - [x] Initialize Firebase (SDK & CLI setup) <!-- id: 4 -->
-- [/] Core Logic & Backend <!-- id: 5 -->
 - [x] Core Logic & Backend <!-- id: 5 -->
     - [x] Design Firestore Data Schema (`slots`, `bookings`) <!-- id: 6 -->
     - [x] Implement Firebase Initialization logic <!-- id: 7 -->
@@ -22,6 +21,8 @@
     - [x] Verify Mobile Responsiveness <!-- id: 18 -->
     - [x] Check Security Rules & API Key Constraints <!-- id: 19 -->
     - [x] Build & Deploy (Firebase Hosting/GitHub Pages) <!-- id: 20 -->
+    - [x] Configure GitHub Actions (CI/CD) <!-- id: 21 -->
+    - [x] Document Deployment Troubleshooting (Post-Mortem) <!-- id: 22 -->
 
 - [x] **Real-time & PWA**
     - [x] Verify Real-time Slot Updates (Confirmed `onSnapshot` usage)

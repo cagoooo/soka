@@ -184,9 +184,10 @@ export const SessionSelection = () => {
                 {renderSection('方案搭配講座 (B)', ['B'], '需搭配方案 A')}
             </div>
             <div className="sc-divider">OR</div>
-            {renderSection('專题工作坊 (C)', ['C'], '單獨 40 分鐘完整體驗')}
-            <div className="sc-divider">OR</div>
-            {renderSection('特別活動 (D)', ['D'], '單獨 40 分鐘完整體驗')}
+            <div className="combo-row">
+                {renderSection('專题工作坊 (C)', ['C'], '單獨 40 分鐘完整體驗')}
+                {renderSection('特別活動 (D)', ['D'], '單獨 40 分鐘完整體驗')}
+            </div>
 
             <ConflictModal
                 isOpen={showConflictModal}
