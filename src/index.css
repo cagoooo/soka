@@ -1,0 +1,412 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --glass-shadow: 0 12px 40px -8px rgba(31, 38, 135, 0.2);
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+
+  /* Type Specific Gradients (Aurora Style) */
+  --grad-a: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  --grad-b: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  --grad-c: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  --grad-d: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+
+  --accent-a: #4f46e5;
+  --accent-b: #ea580c;
+  --accent-c: #16a34a;
+  --accent-d: #dc2626;
+
+  --text-main: #1e293b;
+  --text-secondary: #475569;
+  --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+  background-color: #f0fdfa;
+  /* Fallback */
+  background-image:
+    radial-gradient(at 0% 0%, #c4b5fd 0px, transparent 50%),
+    radial-gradient(at 100% 0%, #99f6e4 0px, transparent 50%),
+    radial-gradient(at 100% 100%, #fde68a 0px, transparent 50%),
+    radial-gradient(at 0% 100%, #fecaca 0px, transparent 50%);
+  background-size: 140% 140%;
+  animation: auroraBG 20s ease infinite;
+  min-height: 100vh;
+  color: var(--text-main);
+  padding: 20px;
+  padding-bottom: 80px;
+  /* Space for mobile scrolling */
+}
+
+@keyframes auroraBG {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Main Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-radius: 32px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  padding: 3rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  position: relative;
+}
+
+h1 {
+  font-size: 3.5rem;
+  text-align: center;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(to right, #4f46e5, #9333ea, #db2777);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+h2 {
+  font-size: 1.8rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 2rem;
+  letter-spacing: 0.05em;
+}
+
+h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #334155;
+}
+
+/* Slot Cards - Pro Max */
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.slot-card {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.4s var(--transition-bounce);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+/* Type Specific Styles */
+.slot-card.type-A {
+  background: linear-gradient(135deg, #fff 0%, #eef2ff 100%);
+  border-color: #e0e7ff;
+}
+
+.slot-card.type-B {
+  background: linear-gradient(135deg, #fff 0%, #fff7ed 100%);
+  border-color: #ffedd5;
+}
+
+.slot-card.type-C {
+  background: linear-gradient(135deg, #fff 0%, #f0fdf4 100%);
+  border-color: #dcfce7;
+}
+
+.slot-card.type-D {
+  background: linear-gradient(135deg, #fff 0%, #fef2f2 100%);
+  border-color: #fee2e2;
+}
+
+/* Hover Effects */
+.slot-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+.slot-card.type-A:hover {
+  border-color: var(--accent-a);
+}
+
+.slot-card.type-B:hover {
+  border-color: var(--accent-b);
+}
+
+.slot-card.type-C:hover {
+  border-color: var(--accent-c);
+}
+
+.slot-card.type-D:hover {
+  border-color: var(--accent-d);
+}
+
+/* Selected State */
+.slot-card.selected {
+  background: white;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.slot-card.type-A.selected {
+  border: 3px solid var(--accent-a);
+  background: #eef2ff;
+}
+
+.slot-card.type-B.selected {
+  border: 3px solid var(--accent-b);
+  background: #fff7ed;
+}
+
+.slot-card.type-C.selected {
+  border: 3px solid var(--accent-c);
+  background: #f0fdf4;
+}
+
+.slot-card.type-D.selected {
+  border: 3px solid var(--accent-d);
+  background: #fef2f2;
+}
+
+/* Dimmed/Full */
+.slot-card.dimmed {
+  opacity: 0.4;
+  transform: scale(0.95);
+  filter: grayscale(0.8);
+}
+
+.slot-card.full {
+  opacity: 0.6;
+  filter: grayscale(1);
+  cursor: not-allowed;
+  background: #f1f5f9;
+}
+
+/* Card Content */
+.slot-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  line-height: 1.3;
+  color: #0f172a;
+}
+
+.slot-description {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 12px 0 20px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.slot-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.slot-time {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slot-capacity {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.slot-capacity.low {
+  color: #dc2626;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Check Mark Animation */
+.check-mark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-bottom-left-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.type-A .check-mark {
+  background: var(--accent-a);
+}
+
+.type-B .check-mark {
+  background: var(--accent-b);
+}
+
+.type-C .check-mark {
+  background: var(--accent-c);
+}
+
+.type-D .check-mark {
+  background: var(--accent-d);
+}
+
+/* Modern Form */
+input,
+select {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+input:focus {
+  border-color: #6366f1;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  padding: 18px 40px;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+  width: 100%;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Utility */
+.combo-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.sc-divider {
+  text-align: center;
+  font-weight: 900;
+  color: #94a3b8;
+  margin: 40px 0;
+  position: relative;
+  letter-spacing: 2px;
+}
+
+.sc-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 45%;
+  height: 2px;
+  background: #e2e8f0;
+}
+
+.sc-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 45%;
+  height: 2px;
+  background: #e2e8f0;
+}
+
+/* Mobile RWD */
+@media (max-width: 768px) {
+  .glass-card {
+    padding: 1.5rem;
+    border-radius: 24px;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  .combo-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .slot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-primary {
+    padding: 16px;
+    font-size: 1.1rem;
+  }
+}
