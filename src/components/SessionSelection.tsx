@@ -21,9 +21,6 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
     const [pendingSelection, setPendingSelection] = useState<{ id: string, type: SessionType } | null>(null);
     const [showConflictModal, setShowConflictModal] = useState(false);
 
-    // Smart Suggestion Logic (Debounced to strictly once per unique pair)
-    const lastToastKey = useRef<string | null>(null);
-
     useEffect(() => {
         const { selectedA, selectedB } = selection;
         // Only trigger if both A and B are selected
@@ -38,28 +35,10 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
         const floorA = selectedA.split('_')[0];
         const floorB = selectedB.split('_')[0];
 
-        // Scenario 1: Same Floor Diversity (2F or 5F)
-        // If user picks 2F_A + 2F_B, implies they are staying on same floor for identical content
-        if (floorA === floorB && (floorA === '2F' || floorA === '5F')) {
-            toast('💡 貼心提醒：同樓層課程內容相同\n建議選擇不同樓層，體驗更多元喔！', {
-                icon: '💁',
-                duration: 6000,
-                style: {
-                    borderRadius: '16px',
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    color: '#334155',
-                    border: '1px solid #e2e8f0',
-                    boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-                    fontSize: '0.95rem',
-                    textAlign: 'left'
-                }
-            });
-            lastToastKey.current = currentKey;
-        }
-        // Scenario 2: 3F Exploration (Large Venue)
+        // Scenario: 3F Exploration (Large Venue)
         // If user picks 3F + 3F, remind them there are many booths
-        else if (floorA === '3F' && floorB === '3F') {
-            toast('💡 貼心提醒：3F 展場很大共有 8 種攤位\n歡迎多逛逛同樓層的其他攤位！', {
+        if (floorA === '3F' && floorB === '3F') {
+            toast('💡 貼心提醒：3F 樓層很大攤位很多\n歡迎您多多逛逛！', {
                 icon: '🗺️',
                 duration: 6000,
                 style: {
@@ -212,6 +191,19 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                 // If A or B is selected
                                 if ((selection.selectedA || selection.selectedB)) {
                                     if (slot.type === 'C' || slot.type === 'D') isDimmed = true;
+                                }
+
+                                // --- Strict Exclusion for 2F & 5F ---
+                                const [floor, type] = slot.id.split('_');
+                                if (floor === '2F' || floor === '5F') {
+                                    const otherType = type === 'A' ? 'B' : 'A';
+                                    const selectedOther = otherType === 'A' ? selection.selectedA : selection.selectedB;
+
+                                    // If the OTHER type is selected on the SAME floor, dim this one
+                                    // e.g. if I am 2F_B, and 2F_A is selected -> dim me
+                                    if (selectedOther && selectedOther.startsWith(`${floor}_`)) {
+                                        isDimmed = true;
+                                    }
                                 }
                             }
 
