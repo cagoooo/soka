@@ -72,8 +72,15 @@ export const AdminDashboard = () => {
             };
         };
 
+        // Sort bookings by timestamp (Ascending: Earliest first)
+        const sortedBookings = [...bookings].sort((a, b) => {
+            const timeA = a.timestamp && typeof a.timestamp.toMillis === 'function' ? a.timestamp.toMillis() : 0;
+            const timeB = b.timestamp && typeof b.timestamp.toMillis === 'function' ? b.timestamp.toMillis() : 0;
+            return timeA - timeB;
+        });
+
         // --- Sheet 1: Master List (總覽) ---
-        const masterData = bookings.map(formatBooking);
+        const masterData = sortedBookings.map(formatBooking);
         const wsMaster = XLSX.utils.json_to_sheet(masterData);
         XLSX.utils.book_append_sheet(wb, wsMaster, "總覽 (Master)");
 
@@ -85,10 +92,10 @@ export const AdminDashboard = () => {
 
         // 2. Create a sheet for each slot
         sortedSlots.forEach(slotId => {
-            // Filter bookings that include this specific slot
-            const slotBookings = bookings
+            // Filter bookings that include this specific slot (using the Sorted Bookings)
+            const slotBookings = sortedBookings
                 .filter(b => b.slots.includes(slotId))
-                .map(formatBooking); // Reuse same format
+                .map(formatBooking);
 
             if (slotBookings.length > 0) {
                 const wsSlot = XLSX.utils.json_to_sheet(slotBookings);
