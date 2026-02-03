@@ -41,17 +41,50 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
         // Scenario: 3F Exploration (Large Venue)
         // If user picks 3F + 3F, remind them there are many booths
         if (floorA === '3F' && floorB === '3F') {
-            toast('💡 貼心提醒：3F 樓層很大攤位很多\n歡迎您多多逛逛！', {
-                icon: '🗺️',
-                duration: 6000,
+            toast((t) => (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '4px' }}>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#334155', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '1.6rem' }}>🗺️</span>
+                        貼心提醒
+                    </div>
+                    <div style={{ textAlign: 'center', lineHeight: '1.6', fontSize: '1.05rem', color: '#475569', fontWeight: 500 }}>
+                        3F 樓層很大攤位很多<br />
+                        歡迎您多多逛逛！
+                    </div>
+                    <button
+                        onClick={() => toast.dismiss(t.id)}
+                        style={{
+                            marginTop: '4px',
+                            padding: '8px 24px',
+                            background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50px',
+                            fontWeight: 600,
+                            fontSize: '0.95rem',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)',
+                            transition: 'transform 0.1s'
+                        }}
+                        onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.95)'}
+                        onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                        好的，我知道了
+                    </button>
+                </div>
+            ), {
+                id: currentKey, // Use key as ID to prevent duplicates natively too
+                duration: Infinity, // Require manual dismiss
+                position: 'top-center',
                 style: {
-                    borderRadius: '16px',
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    color: '#334155',
-                    border: '1px solid #e2e8f0',
-                    boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-                    fontSize: '0.95rem',
-                    textAlign: 'left'
+                    borderRadius: '24px',
+                    background: 'rgba(255, 255, 255, 1)',
+                    border: '2px solid #3b82f6', // distinct border color
+                    padding: '20px',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    maxWidth: '90vw',
+                    width: '360px',
+                    zIndex: 9999,
                 }
             });
             lastToastKey.current = currentKey;
