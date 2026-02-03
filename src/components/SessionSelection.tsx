@@ -240,13 +240,13 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                     layoutId={slot.id}
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{
-                                        opacity: disabled && !isSelected ? 0.4 : 1, // Only dim if disabled AND NOT selected
+                                        opacity: (disabled || isDimmed) && !isSelected ? 0.4 : 1, // Dim if disabled OR dimmed (and not selected)
                                         scale: isSelected ? 1.02 : 1,
-                                        filter: isFull && !isSelected ? 'grayscale(100%)' : (disabled && !isSelected ? 'grayscale(100%)' : 'none'), // Only grayscale if full OR (disabled AND NOT selected)
+                                        filter: (isFull || isDimmed) && !isSelected ? 'grayscale(100%)' : (disabled && !isSelected ? 'grayscale(100%)' : 'none'), // Grayscale if full OR dimmed OR disabled
                                     }}
                                     whileHover={(!isFull && !isDimmed && !disabled) ? { y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.1)' } : {}}
                                     whileTap={(!isFull && !isDimmed && !disabled) ? { scale: 0.98 } : {}}
-                                    onClick={() => !isFull && !disabled && handleSlotClick(slot.id, slot.type)}
+                                    onClick={() => !isFull && !disabled && !isDimmed && handleSlotClick(slot.id, slot.type)}
                                     className={`slot-card type-${slot.type} ${isSelected ? 'selected' : ''} ${isFull ? 'full' : ''}`}
                                     style={disabled ? {
                                         cursor: 'default',
