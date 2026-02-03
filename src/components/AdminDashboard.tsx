@@ -110,6 +110,121 @@ export const AdminDashboard = () => {
         XLSX.writeFile(wb, `Soka_Expo_Bookings_${format(new Date(), 'yyyyMMdd_HHmm')}.xlsx`);
     };
 
+    // 3. PDF / Print Export Logic (Native Browser Print for A4)
+    const handleExportPDF = () => {
+        if (bookings.length === 0) {
+            alert("目前沒有報名資料可匯出");
+            return;
+        }
+
+        // Sort bookings by timestamp (Ascending)
+        const sortedBookings = [...bookings].sort((a, b) => {
+            const timeA = a.timestamp && typeof a.timestamp.toMillis === 'function' ? a.timestamp.toMillis() : 0;
+            const timeB = b.timestamp && typeof b.timestamp.toMillis === 'function' ? b.timestamp.toMillis() : 0;
+            return timeA - timeB;
+        });
+
+        // Prepare Data Groups (By Slot)
+        const uniqueSlots = new Set<string>();
+        bookings.forEach(b => b.slots.forEach(s => uniqueSlots.add(s)));
+        const sortedSlots = Array.from(uniqueSlots).sort();
+
+        // Generate HTML Content
+        let printContent = `
+            <html>
+            <head>
+                <title>Soka Expo 2026 - 簽到表</title>
+                <style>
+                    @media print {
+                        @page { size: A4 portrait; margin: 1cm; }
+                        body { font-family: "Microsoft JhengHei", sans-serif; -webkit-print-color-adjust: exact; }
+                        .page-break { page-break-after: always; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                        th, td { border: 1px solid #000; padding: 8px; font-size: 12pt; text-align: center; vertical-align: middle; }
+                        th { background-color: #f0f0f0; font-weight: bold; }
+                        .sign-col { width: 150px; } /* Fixed width for signature */
+                        h2 { text-align: center; margin-bottom: 15px; font-size: 18pt; border-bottom: 2px solid #000; padding-bottom: 10px; }
+                        .meta-info { text-align: right; font-size: 10pt; margin-bottom: 5px; color: #666; }
+                    }
+                    /* Screen styles for preview (optional) */
+                    body { font-family: sans-serif; padding: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                    th, td { border: 1px solid #333; padding: 6px; text-align: center; }
+                    h2 { border-bottom: 2px solid #333; }
+                </style>
+            </head>
+            <body>
+        `;
+
+        // Generate a table for each slot
+        sortedSlots.forEach((slotId, index) => {
+            // Get bookings for this slot
+            const slotBookings = sortedBookings.filter(b => b.slots.includes(slotId));
+            if (slotBookings.length === 0) return;
+
+            // Page break before every slot except the first one
+            if (index > 0) printContent += `<div class="page-break"></div>`;
+
+            // Metadata Header
+            printContent += `
+                <div class="meta-info">列印時間: ${format(new Date(), 'yyyy-MM-dd HH:mm')}</div>
+                <h2>${slotId} - 簽到表 (共 ${slotBookings.length} 人)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">ID</th>
+                            <th style="width: 120px;">姓名</th>
+                            <th style="width: 160px;">報名時間</th>
+                            <th>選課 ID</th>
+                            <th class="sign-col">簽到</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // Rows
+            slotBookings.forEach(b => {
+                let dateStr = 'N/A';
+                if (b.timestamp && typeof b.timestamp.toDate === 'function') {
+                    dateStr = format(b.timestamp.toDate(), 'yyyy-MM-dd HH:mm:ss');
+                }
+                const shortId = b.id ? b.id.substring(0, 8).toUpperCase() : '';
+
+                printContent += `
+                    <tr>
+                        <td>${shortId}</td>
+                        <td>${b.name}</td>
+                        <td>${dateStr}</td>
+                        <td style="font-size: 10pt;">${b.slots.join(', ')}</td>
+                        <td></td> <!-- Empty for Signature -->
+                    </tr>
+                `;
+            });
+
+            printContent += `
+                    </tbody>
+                </table>
+            `;
+        });
+
+        printContent += `</body></html>`;
+
+        // Open Print Window
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            // Wait for content to load then print
+            setTimeout(() => {
+                printWindow.focus();
+                printWindow.print();
+                // Optional: printWindow.close(); // Keep open for user to manually close if needed
+            }, 500);
+        } else {
+            alert('請允許開啟彈跳視窗以進行列印');
+        }
+    };
+
     if (loading) {
         return <div style={{ textAlign: 'center', padding: '50px' }}>載入中...</div>;
     }
@@ -132,6 +247,9 @@ export const AdminDashboard = () => {
                     </button>
                     <button onClick={handleExport} className="btn-primary mobile-icon-btn" style={{ background: '#10b981' }}>
                         <span className="icon">📥</span> <span className="text">匯出 Excel</span>
+                    </button>
+                    <button onClick={handleExportPDF} className="btn-primary mobile-icon-btn" style={{ background: '#6366f1' }}>
+                        <span className="icon">🖨️</span> <span className="text">匯出 PDF</span>
                     </button>
                 </div>
             </div>
