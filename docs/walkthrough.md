@@ -118,6 +118,8 @@ A comprehensive backend dashboard for administrators:
     - **Skeleton Loading**: Implemented "Shimmer" skeletons during data fetching, reducing perceived wait time compared to traditional spinners.
 - **Safety**:
     - **Custom Confirmation Modal**: Replaced native `window.confirm` with a custom-designed Modal to prevent "auto-confirmation" issues in LINE/FB browsers and providing a clear, safe "Think Again" option (includes 20/40 min duration details).
+- **Stability**:
+    - **Smart Deploys**: Implemented `lazyRetry` mechanism. If a user is on an old version and tries to load a page that has been updated (causing a 404 Chunk Error), the system now automatically reloads to get the fresh version instead of crashing.
 - **Navigation**:
     - **Back to Home**: Changed "Temporarily Close" to "Back to Home" on the ticket view. This now correctly toggles the view instead of reloading the page, allowing users to return to the landing page.
     - **View My Ticket**: Added a dedicated button on the landing page for users with existing tickets to easily access their Digital Ticket.

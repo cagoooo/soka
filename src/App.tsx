@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { AuthWrapper } from './components/AuthWrapper';
 import { BookingProvider, useBooking } from './contexts/BookingContext';
 import { db } from './firebase';
@@ -13,9 +13,10 @@ import { ConfirmBookingModal } from './components/ConfirmBookingModal';
 import { submitBooking, type UserDetails } from './services/bookingService';
 import './index.css';
 
-// Lazy load heavy components
-const AdminDashboard = lazy(() => import('./components/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
-const TicketView = lazy(() => import('./components/TicketView').then(module => ({ default: module.TicketView })));
+// Lazy load heavy components with retry logic for 404 chunk errors
+import { lazyRetry } from './utils/lazyImport';
+const AdminDashboard = lazyRetry(() => import('./components/AdminDashboard').then(module => ({ default: module.AdminDashboard })), 'AdminDashboard');
+const TicketView = lazyRetry(() => import('./components/TicketView').then(module => ({ default: module.TicketView })), 'TicketView');
 
 // Loading Component
 const Loading = () => (
