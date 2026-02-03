@@ -51,6 +51,7 @@ export const submitBooking = async (selection: BookingState, userDetails: UserDe
             userId: auth.currentUser!.uid,
             userName: userDetails.name,
             userPhone: userDetails.phone,
+            userEmail: userDetails.email || '', // Added Email
             slots: slotsToBook,
             selectionData: selection,
             timestamp: serverTimestamp(),
@@ -66,6 +67,7 @@ export interface BookingRecord {
     bookingId: string; // Human-readable ID (e.g. SOKA-2026-XYZ)
     name: string;
     phone: string;
+    email?: string; // Added Email field
     studentId?: string; // Optional for compatibility with old records
     department?: string; // Optional for compatibility with old records
     slots: string[];
@@ -88,8 +90,9 @@ export const getAllBookings = async (): Promise<BookingRecord[]> => {
         return {
             id: doc.id,
             bookingId: data.bookingId || 'UNKNOWN',
-            name: data.name || 'Unknown',
-            phone: data.phone || '',
+            name: data.userName || data.name || 'Unknown', // Fixed mapping
+            phone: data.userPhone || data.phone || '', // Fixed mapping
+            email: data.userEmail || data.email || '', // Added Email mapping
             studentId: data.studentId || '',
             department: data.department || '',
             slots: data.slots || [],

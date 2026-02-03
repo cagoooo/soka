@@ -58,9 +58,8 @@ export const AdminDashboard = () => {
 
             return {
                 姓名: b.name,
-                學號: b.studentId, // Added Student ID
-                系級: b.department, // Added Department
                 電話: b.phone,
+                Email: b.email || '', // Added Email
                 報名時間: dateStr,
                 選課ID: b.slots.join(', '),
                 狀態: '已報名' // Hardcoded for simplified version
@@ -107,23 +106,37 @@ export const AdminDashboard = () => {
             </div>
 
             {/* Chart */}
-            <div className="glass-card" style={{ padding: '20px', marginBottom: '30px', height: '300px' }}>
-                <h3 style={{ marginBottom: '10px' }}>場次熱門度統計</h3>
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
-                        <XAxis dataKey="name" />
-                        <YAxis allowDecimals={false} />
-                        <Tooltip
-                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                            cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }}
-                        />
-                        <Bar dataKey="count" fill="#8884d8" radius={[4, 4, 0, 0]}>
-                            {chartData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.name.includes('A') ? '#818cf8' : entry.name.includes('B') ? '#fb923c' : '#34d399'} />
-                            ))}
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
+            {/* Chart */}
+            <div className="glass-card" style={{ padding: '24px', marginBottom: '30px', height: '450px', display: 'flex', flexDirection: 'column' }}>
+                <h3 style={{ marginBottom: '20px', fontSize: '1.25rem', color: '#475569', flexShrink: 0 }}>📊 場次熱門度統計</h3>
+                <div style={{ flex: 1, width: '100%', minHeight: 0 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
+                            <XAxis
+                                dataKey="name"
+                                tick={{ fill: '#64748b', fontSize: 12 }}
+                                tickLine={false}
+                                axisLine={{ stroke: '#cbd5e1' }}
+                                dy={10}
+                            />
+                            <YAxis
+                                allowDecimals={false}
+                                tick={{ fill: '#64748b', fontSize: 12 }}
+                                tickLine={false}
+                                axisLine={false}
+                            />
+                            <Tooltip
+                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', background: 'rgba(255, 255, 255, 0.95)' }}
+                                cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }}
+                            />
+                            <Bar dataKey="count" radius={[6, 6, 0, 0]} barSize={40}>
+                                {chartData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.name.includes('A') ? '#818cf8' : entry.name.includes('B') ? '#fb923c' : '#34d399'} />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
             {/* System Tools */}

@@ -1,6 +1,8 @@
 import { AuthWrapper } from './components/AuthWrapper';
 import { BookingProvider, useBooking } from './contexts/BookingContext';
 import { useSlots } from './hooks/useSlots';
+import { db } from './firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 import { SessionSelection } from './components/SessionSelection';
 import { RegistrationForm } from './components/RegistrationForm';
@@ -15,6 +17,7 @@ interface TicketData {
   bookingId: string;
   userDetails: UserDetails;
   selectedSlotIds: string[];
+  timestamp?: number; // Added to track when this ticket was created locally
 }
 
 const MainContent = () => {
@@ -25,17 +28,50 @@ const MainContent = () => {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [ticketData, setTicketData] = useState<TicketData | null>(null);
 
-  // Device Restriction: Check for existing ticket on mount
+  // Device Restriction: Check for existing ticket on mount AND check for system reset
   useEffect(() => {
-    const savedTicket = localStorage.getItem('soka_ticket_2026');
-    if (savedTicket) {
+    const checkSystemStatus = async () => {
+      const savedTicketStr = localStorage.getItem('soka_ticket_2026');
+      if (!savedTicketStr) return;
+
+      let savedTicket: TicketData;
       try {
-        setTicketData(JSON.parse(savedTicket));
+        savedTicket = JSON.parse(savedTicketStr);
       } catch (e) {
         console.error("Failed to parse saved ticket", e);
         localStorage.removeItem('soka_ticket_2026');
+        return;
       }
-    }
+
+      // Check system reset time
+      try {
+        const sysDoc = await getDoc(doc(db, 'system', 'config'));
+        if (sysDoc.exists()) {
+          const sysData = sysDoc.data();
+          if (sysData.lastReset) {
+            const lastResetTime = new Date(sysData.lastReset).getTime();
+            const ticketTime = savedTicket.timestamp || 0; // Old tickets might not have timestamp
+
+            // If ticket was created BEFORE the last reset, invalidate it
+            // We add a small buffer (e.g. 1 min) just in case of slight clock skews, 
+            // but generally logic is: Reset Time > Ticket Time => INVALID
+            if (lastResetTime > ticketTime) {
+              console.log("System reset detected. Clearing local ticket.");
+              localStorage.removeItem('soka_ticket_2026');
+              setTicketData(null);
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to check system status:", err);
+        // Fallback: If network fail, trust local data for now
+      }
+
+      setTicketData(savedTicket);
+    };
+
+    checkSystemStatus();
   }, []);
 
   const handleNext = () => {
@@ -68,10 +104,11 @@ const MainContent = () => {
     try {
       const bookingId = await submitBooking(selection, details);
 
-      const newTicketData = {
+      const newTicketData: TicketData = {
         bookingId,
         userDetails: details,
-        selectedSlotIds: selectedIds
+        selectedSlotIds: selectedIds,
+        timestamp: Date.now() // Record creation time
       };
 
       // Save to localStorage to lock device

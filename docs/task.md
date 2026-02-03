@@ -36,13 +36,13 @@
     - [x] Implement Device Restriction (One Ticket per Browser)
     - [x] Implement Pre-submission Confirmation (Session Summary & Device Warning)
 
-- [/] **Phase 2: Administrative & Marketing**
-    - [ ] **Admin Dashboard: Excel Export** <!-- id: 23 -->
-        - [ ] Create `exportToExcel` utility using `xlsx` <!-- id: 24 -->
-        - [ ] Add "Download Excel" button to Admin Dashboard <!-- id: 25 -->
-    - [ ] **Social Media Optimization (SEO)** <!-- id: 26 -->
-        - [ ] Generate/Add `og:image` to public folder <!-- id: 27 -->
-        - [ ] Update `index.html` with Open Graph meta tags <!-- id: 28 -->
-    - [ ] **Real-time UX** <!-- id: 29 -->
-        - [ ] Refactor `useSlots` to use `onSnapshot` listener <!-- id: 30 -->
-        - [ ] Verify concurrent update behavior <!-- id: 31 -->
+- [x] **Phase 2: Administrative & Marketing**
+    - [x] **Admin Dashboard: Excel Export** <!-- id: 23 -->
+        - [x] Create `exportToExcel` utility using `xlsx` <!-- id: 24 -->
+        - [x] Add "Download Excel" button to Admin Dashboard <!-- id: 25 -->
+    - [x] **Social Media Optimization (SEO)** <!-- id: 26 -->
+        - [x] Generate/Add `og:image` to public folder (`SOKA.jpg`) <!-- id: 27 -->
+        - [x] Update `index.html` with Open Graph meta tags <!-- id: 28 -->
+    - [x] **Real-time UX** <!-- id: 29 -->
+        - [x] Refactor `useSlots` to use `onSnapshot` listener <!-- id: 30 -->
+        - [x] Verify concurrent update behavior <!-- id: 31 -->

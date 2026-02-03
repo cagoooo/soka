@@ -3,7 +3,8 @@ import { db } from '../firebase';
 
 export const SeedButton = () => {
     const handleSeed = async () => {
-        if (!confirm('警告：這將刪除所有「報名資料」與「場次紀錄」，確定要重置嗎？')) return;
+        const message = `⚠️ 危險操作警告 ⚠️\n\n1. 所有「報名資料」與「場次紀錄」將被永久刪除。\n2. 所有已報名使用者的裝置將被「解除鎖定」，允許重新選課。\n\n確定要執行系統完全重置嗎？`;
+        if (!confirm(message)) return;
 
         const batch = writeBatch(db);
 
@@ -48,6 +49,13 @@ export const SeedButton = () => {
                     ...session,
                     endTime: ''
                 });
+            });
+
+            // 4. Update System Config with Reset Timestamp
+            // This allows clients to know they should clear their local storage
+            const systemRef = doc(db, 'system', 'config');
+            batch.set(systemRef, {
+                lastReset: new Date().toISOString() // Use ISO string for easier client-side comparison
             });
 
             await batch.commit();

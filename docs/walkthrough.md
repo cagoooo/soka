@@ -70,3 +70,14 @@ A comprehensive backend dashboard for administrators:
     - Smooth animations using `framer-motion`.
     - Interactive hover states.
     - Optimized RWD layout for mobile devices.
+
+## 🛠️ v1.0.1 Updates (Latest)
+- **Reset All Functionality**:
+    - **Server-Side**: Added timestamp tracking to system config upon reset.
+    - **Client-Side**: Auto-detection of system reset clears local storage permit logic, allowing devices to re-register immediately.
+    - **UX**: Updated Admin warning message to clearly state device unlock consequences.
+- **Data Accuracy**:
+    - **Export Fix**: Corrected data mapping to resolve "Unknown" names and missing phones.
+    - **New Fields**: Added `Email` field collection and export support.
+- **UI Optimizations**:
+    - **Admin Charts**: Refactored to Flexbox layout to fix label truncation and improved mobile responsiveness.
