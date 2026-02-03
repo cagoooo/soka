@@ -45,7 +45,7 @@ export const AdminDashboard = () => {
     const chartData = Object.keys(slotCounts).map(key => ({
         name: key,
         count: slotCounts[key]
-    })).sort((a, b) => b.name.localeCompare(a.name)); // Sort by ID usually groups types
+    })).sort((a, b) => a.name.localeCompare(b.name)); // Sort by ID ascending (2F -> 6F)
 
     // 2. Excel Export Logic (Advanced Multi-Sheet)
     const handleExport = () => {

@@ -7,6 +7,7 @@
     - **Live Monitor**：導入 Firestore `onSnapshot`，實現儀表板「秒級」自動更新，搭配紅點動畫 (Live Badge) 掌握即時戰況。
     - **Excel Export**：一鍵匯出完整報名名單 (.xlsx)，自動格式化欄位 (姓名、場次、時間)，優化行政作業流程。
     - **RWD Optimization**：優化後台按鈕與工具列在手機/電腦版面的顯示，確保操作體驗一致。
+    - **Social Card Polish**：優化 LINE/Facebook 分享卡片，加入吸睛標題與急迫感文案，提升點擊率。
 
 ### **v1.0.7 - Post-Booking Experience (User Fidelity)**
 - 🔒 **選課鎖定機制 (Lock Logic)**：
