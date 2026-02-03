@@ -85,21 +85,21 @@ export const AdminDashboard = () => {
     return (
         <div style={{ textAlign: 'left', width: '100%' }}>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                     <h2 style={{ margin: 0, textAlign: 'left', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        📊 即時看板 Dashboard
+                        📊 即時看板
                         <span className="live-badge">
                             <span className="live-dot"></span> LIVE
                         </span>
                     </h2>
                 </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                    <button onClick={refreshData} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
-                        🔄 強制刷新
+                <div className="dashboard-actions" style={{ display: 'flex', gap: '10px' }}>
+                    <button onClick={refreshData} className="btn-secondary mobile-icon-btn">
+                        <span className="icon">🔄</span> <span className="text">強制刷新</span>
                     </button>
-                    <button onClick={handleExport} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem', background: '#10b981' }}>
-                        📥 匯出 Excel
+                    <button onClick={handleExport} className="btn-primary mobile-icon-btn" style={{ background: '#10b981' }}>
+                        <span className="icon">📥</span> <span className="text">匯出 Excel</span>
                     </button>
                 </div>
             </div>
