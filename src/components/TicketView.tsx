@@ -267,6 +267,17 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
                 </div>
             </div>
 
+            <footer style={{ textAlign: 'center', padding: '20px 0', marginTop: '10px' }}>
+                <a
+                    href="https://cagoooo.github.io/Akai/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="akai-badge"
+                >
+                    ✨ Made by 阿凱老師
+                </a>
+            </footer>
+
             {/* Mobile Save Image Modal */}
             <AnimatePresence>
                 {generatedImage && (
