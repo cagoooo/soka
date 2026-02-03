@@ -127,6 +127,28 @@ export const SessionSelection = () => {
 
                             const isFull = slot.booked >= slot.capacity;
 
+                            // UI Logic for Availability
+                            const remaining = slot.capacity - slot.booked;
+                            const percent = (slot.booked / slot.capacity) * 100;
+
+                            let statusColor = '#10b981'; // Green
+                            let statusText = '尚有名額';
+                            let statusIcon = '🟢';
+
+                            if (remaining === 0) {
+                                statusColor = '#64748b';
+                                statusText = '已額滿';
+                                statusIcon = '❌';
+                            } else if (remaining <= 20) {
+                                statusColor = '#ef4444'; // Red
+                                statusText = '最後搶購';
+                                statusIcon = '🔥';
+                            } else if (percent >= 70) {
+                                statusColor = '#f59e0b'; // Orange
+                                statusText = '即將額滿';
+                                statusIcon = '⚡';
+                            }
+
                             return (
                                 <motion.div
                                     key={slot.id}
@@ -151,17 +173,56 @@ export const SessionSelection = () => {
                                         </motion.div>
                                     )}
 
+                                    {/* Sold Out Overlay */}
+                                    {isFull && (
+                                        <div className="sold-out-overlay-text">
+                                            SOLD OUT
+                                        </div>
+                                    )}
+
                                     <span className="slot-name">{slot.title}</span>
                                     <div className="slot-location">📍 {slot.location}</div>
                                     <p className="slot-description">
                                         {slot.description}
                                     </p>
 
-                                    <div className="slot-footer">
-                                        <span className="slot-time">⏱ {slot.startTime}</span>
-                                        <span className={`slot-capacity ${slot.capacity - slot.booked < 10 ? 'low' : ''}`}>
-                                            剩餘: {slot.capacity - slot.booked}
-                                        </span>
+                                    <div className="slot-footer" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '12px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span className="slot-time">⏱ {slot.startTime}</span>
+
+                                            <div style={{ textAlign: 'right' }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                                                    <span style={{
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: 700,
+                                                        color: statusColor,
+                                                        background: `${statusColor}15`,
+                                                        padding: '2px 8px',
+                                                        borderRadius: '12px',
+                                                        marginBottom: '2px'
+                                                    }}>
+                                                        {statusIcon} {statusText}
+                                                    </span>
+                                                    <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#334155' }}>
+                                                        剩餘 <span style={{ color: statusColor, fontSize: '1.4rem' }}>{remaining}</span> 席
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Progress Bar */}
+                                        <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${(slot.booked / slot.capacity) * 100}%` }}
+                                                transition={{ duration: 1, ease: "easeOut" }}
+                                                style={{
+                                                    height: '100%',
+                                                    background: statusColor,
+                                                    borderRadius: '4px'
+                                                }}
+                                            />
+                                        </div>
                                     </div>
                                 </motion.div>
                             );

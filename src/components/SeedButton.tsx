@@ -29,12 +29,12 @@ export const SeedButton = () => {
 
                 // A Sessions
                 { id: '2F_A', type: 'A', location: '二樓', title: '躍動潛能：音樂與生命的對話', description: '登上舞台親自執棒，指揮天谷樂團演奏。民眾實際體驗指揮流程，近距離感受音樂。', capacity: 50, booked: 0, startTime: '20分鐘' },
-                { id: '3F_A', type: 'A', location: '三樓', title: '正向教養攤位*4攤 / 專業課程攤位*4攤', description: '參與正向教養情境模擬，四種體驗活動，練習溫和堅定對話。透過實際操作，掌握尊重與合作的教養技巧。進入創價教育專業課堂，表演藝術、音樂、資訊、永續桌遊，實踐人本教學策略。親自操作教育方案，提升現場引導與溝通能力。', capacity: 160, booked: 0, startTime: '20分鐘' },
+                { id: '3F_A', type: 'A', location: '三樓', title: '正向教養攤位*4攤 / 專業課程攤位*4攤', description: '【正向教養攤位】\n參與正向教養情境模擬，四種體驗活動，練習溫和堅定對話。透過實際操作，掌握尊重與合作的教養技巧。\n\n【專業課程攤位】\n進入創價教育專業課堂，表演藝術、音樂、資訊、永續桌遊，實踐人本教學策略。親自操作教育方案，提升現場引導與溝通能力。', capacity: 160, booked: 0, startTime: '20分鐘' },
                 { id: '5F_A', type: 'A', location: '五樓', title: '創價 OPEN SPACE：無劇本思維冒險', description: '透過互動參與實踐創價理念，探索人本教育新模式。在活動中將價值創造轉化為具體行動。', capacity: 120, booked: 0, startTime: '20分鐘' },
 
                 // B Sessions
                 { id: '2F_B', type: 'B', location: '二樓', title: '躍動潛能：音樂與生命的對話', description: '登上舞台親自執棒，指揮天谷樂團演奏。民眾實際體驗指揮流程，近距離感受音樂。', capacity: 50, booked: 0, startTime: '20分鐘' },
-                { id: '3F_B', type: 'B', location: '三樓', title: '正向教養攤位*4攤 / 專業課程攤位*4攤', description: '參與正向教養情境模擬，四種體驗活動，練習溫和堅定對話。透過實際操作，掌握尊重與合作的教養技巧。進入創價教育專業課堂，表演藝術、音樂、資訊、永續桌遊，實踐人本教學策略。親自操作教育方案，提升現場引導與溝通能力。', capacity: 160, booked: 0, startTime: '20分鐘' },
+                { id: '3F_B', type: 'B', location: '三樓', title: '正向教養攤位*4攤 / 專業課程攤位*4攤', description: '【正向教養攤位】\n參與正向教養情境模擬，四種體驗活動，練習溫和堅定對話。透過實際操作，掌握尊重與合作的教養技巧。\n\n【專業課程攤位】\n進入創價教育專業課堂，表演藝術、音樂、資訊、永續桌遊，實踐人本教學策略。親自操作教育方案，提升現場引導與溝通能力。', capacity: 160, booked: 0, startTime: '20分鐘' },
                 { id: '5F_B', type: 'B', location: '五樓', title: '創價 OPEN SPACE：無劇本思維冒險', description: '透過互動參與實踐創價理念，探索人本教育新模式。在活動中將價值創造轉化為具體行動。', capacity: 120, booked: 0, startTime: '20分鐘' },
 
                 // C Session

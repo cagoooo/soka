@@ -87,8 +87,15 @@ A comprehensive backend dashboard for administrators:
     - **3F (A/B)**: Updated to combined "Positive Parenting / Professional Course" booths. Capacity adjusted to **160**.
     - **6F_C & 6F_D**: Capacity increased from 60 to **70**.
 
-## 🛠️ v1.0.3 Updates (Latest)
+## 🛠️ v1.0.3 Updates
 - **Privacy & Data Minimization**:
     - **Registration**: Removed `Phone` and `Email` fields from the registration form. Now only requires `Name`.
     - **Admin Export**: Removed `Phone` and `Email` columns from the Excel export.
     - **Digital Ticket**: Removed phone number display from the ticket view.
+
+## 🛠️ v1.0.4 Updates (Latest)
+- **UI/UX Experience Overhaul**:
+    - **Session Cards**: Removed text truncation to display full 3F session descriptions with clear paragraph formatting.
+    - **Ticket Availability**: Added dynamic "Remaining Status" badges (🟢 Available / ⚡ Selling Fast / 🔥 Last Chance) and visual progress bars.
+    - **Sold Out Effect**: Implemented a "SOLD OUT" stamp overlay, grayscale effect, and disabled interaction for fully booked sessions.
+    - **Real-time Sync**: Verified instant UI updates across devices when availability changes.
