@@ -129,6 +129,18 @@ export const AdminDashboard = () => {
         bookings.forEach(b => b.slots.forEach(s => uniqueSlots.add(s)));
         const sortedSlots = Array.from(uniqueSlots).sort();
 
+        // Helper to get descriptive title
+        const getSlotTitle = (slotId: string) => {
+            const type = slotId.split('_')[1]; // e.g., 2F_A -> A
+            switch (type) {
+                case 'A': return '方案主要活動 (A)';
+                case 'B': return '方案主要活動 (B)';
+                case 'C': return '專題工作坊 (C)';
+                case 'D': return '專題工作坊 (D)';
+                default: return '特別活動';
+            }
+        };
+
         // Generate HTML Content
         let printContent = `
             <html>
@@ -141,16 +153,19 @@ export const AdminDashboard = () => {
                         .page-break { page-break-after: always; }
                         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
                         th, td { border: 1px solid #000; padding: 8px; font-size: 12pt; text-align: center; vertical-align: middle; }
-                        th { background-color: #f0f0f0; font-weight: bold; }
+                        td { height: 50px; } /* Taller rows for signing */
+                        th { background-color: #f0f0f0; font-weight: bold; height: 40px; }
                         .sign-col { width: 150px; } /* Fixed width for signature */
-                        h2 { text-align: center; margin-bottom: 15px; font-size: 18pt; border-bottom: 2px solid #000; padding-bottom: 10px; }
+                        h2 { text-align: center; margin-bottom: 5px; font-size: 18pt; padding-bottom: 5px; }
+                        h3 { text-align: center; margin-top: 0; margin-bottom: 15px; font-size: 14pt; font-weight: normal; border-bottom: 2px solid #000; padding-bottom: 10px; }
                         .meta-info { text-align: right; font-size: 10pt; margin-bottom: 5px; color: #666; }
                     }
                     /* Screen styles for preview (optional) */
                     body { font-family: sans-serif; padding: 20px; }
                     table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-                    th, td { border: 1px solid #333; padding: 6px; text-align: center; }
-                    h2 { border-bottom: 2px solid #333; }
+                    th, td { border: 1px solid #333; padding: 10px; text-align: center; }
+                    td { height: 50px; }
+                    h2, h3 { text-align: center; }
                 </style>
             </head>
             <body>
@@ -166,9 +181,11 @@ export const AdminDashboard = () => {
             if (index > 0) printContent += `<div class="page-break"></div>`;
 
             // Metadata Header
+            const slotTitle = getSlotTitle(slotId);
             printContent += `
                 <div class="meta-info">列印時間: ${format(new Date(), 'yyyy-MM-dd HH:mm')}</div>
-                <h2>${slotId} - 簽到表 (共 ${slotBookings.length} 人)</h2>
+                <h2>${slotId}</h2>
+                <h3>${slotTitle} - 簽到表 (共 ${slotBookings.length} 人)</h3>
                 <table>
                     <thead>
                         <tr>
@@ -192,8 +209,8 @@ export const AdminDashboard = () => {
 
                 printContent += `
                     <tr>
-                        <td>${shortId}</td>
-                        <td>${b.name}</td>
+                        <td style="font-family: monospace; font-weight: bold; letter-spacing: 1px;">${shortId}</td>
+                        <td style="font-size: 14pt; font-weight: 500;">${b.name}</td>
                         <td>${dateStr}</td>
                         <td style="font-size: 10pt;">${b.slots.join(', ')}</td>
                         <td></td> <!-- Empty for Signature -->
@@ -269,7 +286,6 @@ export const AdminDashboard = () => {
             </div>
 
             {/* Chart */}
-            {/* Chart */}
             <div className="glass-card" style={{ padding: '24px', marginBottom: '30px', height: '450px', display: 'flex', flexDirection: 'column' }}>
                 <h3 style={{ marginBottom: '20px', fontSize: '1.25rem', color: '#475569', flexShrink: 0 }}>📊 場次熱門度統計</h3>
                 <div style={{ flex: 1, width: '100%', minHeight: 0 }}>
@@ -302,7 +318,6 @@ export const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* System Tools */}
             {/* System Tools */}
             <div style={{ borderTop: '1px dashed #cbd5e1', paddingTop: '20px', marginTop: '40px' }}>
                 <h3 style={{ fontSize: '1.2rem', color: '#475569', marginBottom: '15px' }}>🛠️ 系統工具 (System Tools)</h3>
