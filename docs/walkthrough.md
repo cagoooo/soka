@@ -111,3 +111,5 @@ A comprehensive backend dashboard for administrators:
 - **Ticket Preservation & Sharing**:
     - **Smart Image Save**: Implemented `html2canvas` to generated high-res ticket images. Added intelligent detection for LINE/FB in-app browsers to guide users to "Long-press to save" (avoiding download failures).
     - **Social Sharing**: Added native **Share** button using Web Share API, allowing one-click sharing of the ticket image to social media.
+- **Brand Identity**:
+    - **Favicon**: Updated site icon to `SOKA.jpg` for consistent brand recognition across browser tabs and PWA installs.
