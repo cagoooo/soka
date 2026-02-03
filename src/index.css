@@ -478,34 +478,45 @@ input:focus {
 @media (max-width: 768px) {
   .dashboard-header {
     flex-direction: column;
-    align-items: flex-start !important;
+    align-items: stretch !important;
+    /* Changed from flex-start to stretch for full width */
   }
 
   .dashboard-actions {
+    display: grid;
+    /* Use Grid for better control */
+    grid-template-columns: 1fr 1fr;
+    /* Explicit 50% split */
+    gap: 10px;
     width: 100%;
   }
 
   .mobile-icon-btn {
-    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 6px;
-    padding: 12px !important;
-    /* Touch target size */
-    font-size: 0.95rem !important;
+    padding: 12px 8px !important;
+    /* Reduce horizontal padding */
+    font-size: 0.9rem !important;
     white-space: nowrap;
-    /* Prevent wrapping */
+    /* CRITICAL: Prevent wrapping */
+    width: 100%;
   }
 
-  /* Optional: Hide text on VERY small screens if needed, but flex:1 usually handles it */
-  @media (max-width: 380px) {
-    .mobile-icon-btn .text {
-      display: none;
+  /* For very small screens (iPhone SE / Fold) */
+  @media (max-width: 360px) {
+    .dashboard-actions {
+      grid-template-columns: 1fr;
+      /* Stack on tiny screens */
     }
+  }
+}
 
-    .mobile-icon-btn .icon {
-      font-size: 1.2rem;
-    }
+/* Desktop default for actions */
+@media (min-width: 769px) {
+  .dashboard-actions {
+    display: flex;
+    gap: 10px;
   }
 }

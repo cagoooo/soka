@@ -94,7 +94,7 @@ export const AdminDashboard = () => {
                         </span>
                     </h2>
                 </div>
-                <div className="dashboard-actions" style={{ display: 'flex', gap: '10px' }}>
+                <div className="dashboard-actions">
                     <button onClick={refreshData} className="btn-secondary mobile-icon-btn">
                         <span className="icon">🔄</span> <span className="text">強制刷新</span>
                     </button>
