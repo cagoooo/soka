@@ -151,12 +151,12 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
             <div className="selection-container">
                 <div className="combo-row">
                     {renderSkeletonSection('方案主要活動 (A)', 2)}
-                    {renderSkeletonSection('方案搭配講座 (B)', 1)}
+                    {renderSkeletonSection('方案主要活動 (B)', 1)}
                 </div>
                 <div className="sc-divider">OR</div>
                 <div className="combo-row">
                     {renderSkeletonSection('專题工作坊 (C)', 2)}
-                    {renderSkeletonSection('特別活動 (D)', 1)}
+                    {renderSkeletonSection('專题工作坊 (D)', 1)}
                 </div>
             </div>
         );
@@ -375,12 +375,12 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
         >
             <div className="combo-row">
                 {renderSection('方案主要活動 (A)', ['A'], '需搭配方案 B')}
-                {renderSection('方案搭配講座 (B)', ['B'], '需搭配方案 A')}
+                {renderSection('方案主要活動 (B)', ['B'], '需搭配方案 A')}
             </div>
             <div className="sc-divider">OR</div>
             <div className="combo-row">
                 {renderSection('專题工作坊 (C)', ['C'], '單獨 40 分鐘完整體驗')}
-                {renderSection('特別活動 (D)', ['D'], '單獨 40 分鐘完整體驗')}
+                {renderSection('專题工作坊 (D)', ['D'], '單獨 40 分鐘完整體驗')}
             </div>
 
             <ConflictModal
