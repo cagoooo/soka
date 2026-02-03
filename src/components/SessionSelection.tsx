@@ -48,6 +48,7 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                         貼心提醒
                     </div>
                     <div style={{ textAlign: 'center', lineHeight: '1.6', fontSize: '1.05rem', color: '#475569', fontWeight: 500 }}>
+                        因為您目前選擇的兩個場次<br />都是在三樓<br />
                         3F 樓層很大攤位很多<br />
                         歡迎您多多逛逛！
                     </div>
