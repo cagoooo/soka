@@ -167,6 +167,9 @@ const MainContent = () => {
     // But user requested "binding", so we keep it. 
     // localStorage.removeItem('soka_ticket_2026'); 
     setViewingTicket(false);
+    setTimeout(() => {
+      document.getElementById('ticket-access-section')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   if (viewingTicket && ticketData) {
@@ -199,7 +202,7 @@ const MainContent = () => {
           bookedSlotIds={ticketData?.selectedSlotIds}
         />
 
-        <div style={{ textAlign: 'center', marginTop: '30px' }}>
+        <div id="ticket-access-section" style={{ textAlign: 'center', marginTop: '30px' }}>
           {ticketData ? (
             <button
               className="btn-primary"
