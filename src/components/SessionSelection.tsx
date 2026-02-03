@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useBooking } from '../contexts/BookingContext';
 import { useSlots } from '../hooks/useSlots';
 import type { SessionType } from '../types';
@@ -6,6 +6,7 @@ import { SeedButton as InjectSeedButton } from './SeedButton';
 import { ConflictModal } from './ConflictModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SessionCardSkeleton } from './skeletons/SessionCardSkeleton';
+import toast from 'react-hot-toast';
 
 // Define props interface
 interface SessionSelectionProps {
@@ -19,6 +20,62 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
 
     const [pendingSelection, setPendingSelection] = useState<{ id: string, type: SessionType } | null>(null);
     const [showConflictModal, setShowConflictModal] = useState(false);
+
+    // Smart Suggestion Logic (Debounced to strictly once per unique pair)
+    const lastToastKey = useRef<string | null>(null);
+
+    useEffect(() => {
+        const { selectedA, selectedB } = selection;
+        // Only trigger if both A and B are selected
+        if (!selectedA || !selectedB) return;
+
+        // Create a unique key for this combination
+        const currentKey = `${selectedA}-${selectedB}`;
+
+        // If we showed a toast for this EXACT combination already, don't spam
+        if (lastToastKey.current === currentKey) return;
+
+        const floorA = selectedA.split('_')[0];
+        const floorB = selectedB.split('_')[0];
+
+        // Scenario 1: Same Floor Diversity (2F or 5F)
+        // If user picks 2F_A + 2F_B, implies they are staying on same floor for identical content
+        if (floorA === floorB && (floorA === '2F' || floorA === '5F')) {
+            toast('💡 貼心提醒：同樓層課程內容相同\n建議選擇不同樓層，體驗更多元喔！', {
+                icon: '💁',
+                duration: 6000,
+                style: {
+                    borderRadius: '16px',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    color: '#334155',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+                    fontSize: '0.95rem',
+                    textAlign: 'left'
+                }
+            });
+            lastToastKey.current = currentKey;
+        }
+        // Scenario 2: 3F Exploration (Large Venue)
+        // If user picks 3F + 3F, remind them there are many booths
+        else if (floorA === '3F' && floorB === '3F') {
+            toast('💡 貼心提醒：3F 展場很大共有 8 種攤位\n歡迎多逛逛同樓層的其他攤位！', {
+                icon: '🗺️',
+                duration: 6000,
+                style: {
+                    borderRadius: '16px',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    color: '#334155',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+                    fontSize: '0.95rem',
+                    textAlign: 'left'
+                }
+            });
+            lastToastKey.current = currentKey;
+        }
+
+    }, [selection.selectedA, selection.selectedB]);
 
     // Smart UX: Check for group conflicts
     const handleSlotClick = (id: string, type: SessionType) => {
