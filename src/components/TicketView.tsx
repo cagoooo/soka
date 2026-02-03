@@ -1,9 +1,10 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { useSlots } from '../hooks/useSlots';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { UserDetails } from '../services/bookingService';
 import html2canvas from 'html2canvas';
 import { useState } from 'react';
+import { isMobile } from '../utils/userAgent';
 
 interface TicketViewProps {
     bookingId: string;
@@ -15,30 +16,82 @@ interface TicketViewProps {
 export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }: TicketViewProps) => {
     const { slots } = useSlots();
     const [secretCount, setSecretCount] = useState(0);
+    const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
     // Map IDs to full slot objects
     const mySlots = selectedSlotIds.map(id => slots.find(s => s.id === id)).filter(Boolean);
 
-    const handleDownload = async () => {
+    const generateImage = async (): Promise<string | null> => {
         const ticketElement = document.getElementById('digital-ticket');
-        if (!ticketElement) return;
+        if (!ticketElement) return null;
 
         try {
             const canvas = await html2canvas(ticketElement, {
-                scale: 2, // Higher resolution
+                scale: 3, // High resolution for crisp text
                 useCORS: true,
                 backgroundColor: '#ffffff',
-                logging: false
+                logging: false,
             });
-
-            const image = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = `Soka_Ticket_${bookingId.slice(0, 8)}.png`;
-            link.click();
+            return canvas.toDataURL('image/png');
         } catch (error) {
-            console.error('Download failed:', error);
-            alert('圖片下載失敗，請嘗試截圖保存。');
+            console.error('Image generation failed:', error);
+            alert('圖片生成失敗，請稍後再試。');
+            return null;
+        }
+    };
+
+    const handleDownload = async () => {
+        const image = await generateImage();
+        if (!image) return;
+
+        // If mobile, show modal for long-press
+        if (isMobile()) {
+            setGeneratedImage(image);
+            return;
+        }
+
+        // Desktop: Direct download
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = `Soka_Ticket_${bookingId.slice(0, 8)}.png`;
+        link.click();
+    };
+
+    const handleShare = async () => {
+        const image = await generateImage();
+        if (!image) return;
+
+        try {
+            // Convert DataURL to Blob
+            const res = await fetch(image);
+            const blob = await res.blob();
+            const file = new File([blob], "Soka_Ticket.png", { type: "image/png" });
+
+            if (navigator.share) {
+                await navigator.share({
+                    title: '2026 創價・教育 EXPO 報名成功！',
+                    text: `我是 ${userDetails.name}，我已經報名參加 2026 創價教育展！快來一起參加！`,
+                    files: [file]
+                });
+            } else {
+                alert('您的裝置不支援原生分享，請使用下載功能。');
+            }
+        } catch (error) {
+            console.error('Share failed:', error);
+            // Fallback for systems that allow text sharing but not files (rare but handling it)
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: '2026 創價・教育 EXPO',
+                        text: `我已經報名參加 2026 創價教育展！\n活動網站: ${window.location.origin}/soka/`,
+                        url: `${window.location.origin}/soka/`
+                    });
+                } catch (e) {
+                    // Share cancelled or failed
+                }
+            } else {
+                alert('分享失敗，請嘗試截圖分享。');
+            }
         }
     };
 
@@ -143,40 +196,110 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
                 </p>
             </motion.div>
 
-            {/* Actions Area - Separate from the capture area */}
-            <div style={{ marginTop: '25px', display: 'flex', gap: '15px', width: '100%', maxWidth: '400px' }}>
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onClose}
-                    style={{ flex: 1, padding: '14px', border: '2px solid #e2e8f0', borderRadius: '16px', background: 'white', color: '#64748b', cursor: 'pointer', fontWeight: 600, fontSize: '0.95rem' }}
-                >
-                    返回
-                </motion.button>
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleDownload}
-                    className="btn-primary"
-                    style={{
-                        flex: 2,
-                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                        boxShadow: '0 10px 25px -5px rgba(99, 102, 241, 0.5)',
-                        border: 'none',
-                        borderRadius: '16px',
-                        color: 'white',
-                        fontWeight: 600,
-                        fontSize: '0.95rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px'
-                    }}
-                >
-                    <span>📥</span> 下載圖片 (Save)
-                </motion.button>
+            {/* Actions Area */}
+            <div style={{ marginTop: '25px', display: 'flex', gap: '10px', width: '100%', maxWidth: '400px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={handleDownload}
+                            className="btn-primary"
+                            style={{
+                                flex: 2,
+                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.4)',
+                                border: 'none',
+                                borderRadius: '16px',
+                                color: 'white',
+                                fontWeight: 600,
+                                fontSize: '0.95rem',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                padding: '14px'
+                            }}
+                        >
+                            <span>💾</span> 儲存票券
+                        </motion.button>
+
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={handleShare}
+                            className="btn-primary"
+                            style={{
+                                flex: 2,
+                                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.4)',
+                                border: 'none',
+                                borderRadius: '16px',
+                                color: 'white',
+                                fontWeight: 600,
+                                fontSize: '0.95rem',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                padding: '14px'
+                            }}
+                        >
+                            <span>📤</span> 分享
+                        </motion.button>
+                    </div>
+
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={onClose}
+                        style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '16px', background: 'transparent', color: '#64748b', cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem' }}
+                    >
+                        暫時關閉
+                    </motion.button>
+                </div>
             </div>
+
+            {/* Mobile Save Image Modal */}
+            <AnimatePresence>
+                {generatedImage && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setGeneratedImage(null)}
+                        style={{
+                            position: 'fixed',
+                            top: 0, left: 0, right: 0, bottom: 0,
+                            background: 'rgba(0,0,0,0.85)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 1000,
+                            padding: '20px'
+                        }}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.8, y: 50 }}
+                            animate={{ scale: 1, y: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ background: 'white', padding: '15px', borderRadius: '16px', textAlign: 'center', maxWidth: '100%', maxHeight: '90vh', overflowY: 'auto' }}
+                        >
+                            <h3 style={{ margin: '0 0 10px', color: '#334155' }}>長按圖片儲存 👇</h3>
+                            <img src={generatedImage} alt="Ticket" style={{ maxWidth: '100%', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+                            <button
+                                onClick={() => setGeneratedImage(null)}
+                                style={{ marginTop: '15px', padding: '10px 30px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontWeight: 600, color: '#475569', width: '100%' }}
+                            >
+                                關閉 (Close)
+                            </button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

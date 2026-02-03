@@ -106,3 +106,8 @@ A comprehensive backend dashboard for administrators:
     - **High Concurrency Support**: Added intelligent **Transaction Retry** mechanism in Firestore to handle 500+ simultaneous users without error.
     - **PWA Offline**: Configured Workbox runtime caching for generic assets and Google Fonts, ensuring ticket display works without internet.
     - **Fast Load**: Optimized imports to resolve circular dependency warnings.
+
+## 🛠️ v1.0.6 Updates (Latest)
+- **Ticket Preservation & Sharing**:
+    - **Smart Image Save**: Implemented `html2canvas` to generated high-res ticket images. Added intelligent detection for LINE/FB in-app browsers to guide users to "Long-press to save" (avoiding download failures).
+    - **Social Sharing**: Added native **Share** button using Web Share API, allowing one-click sharing of the ticket image to social media.
