@@ -153,9 +153,10 @@ export const AdminDashboard = () => {
             </div>
 
             {/* System Tools */}
+            {/* System Tools */}
             <div style={{ borderTop: '1px dashed #cbd5e1', paddingTop: '20px', marginTop: '40px' }}>
                 <h3 style={{ fontSize: '1.2rem', color: '#475569', marginBottom: '15px' }}>🛠️ 系統工具 (System Tools)</h3>
-                <div style={{ display: 'flex', gap: '20px', alignItems: 'center', background: '#f1f5f9', padding: '15px', borderRadius: '12px' }}>
+                <div className="system-tools-card">
                     <div style={{ flex: 1 }}>
                         <h4 style={{ margin: '0 0 5px 0', color: '#ef4444' }}>⚠️ 資料庫重置</h4>
                         <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
