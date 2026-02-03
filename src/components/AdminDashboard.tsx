@@ -47,34 +47,57 @@ export const AdminDashboard = () => {
         count: slotCounts[key]
     })).sort((a, b) => b.name.localeCompare(a.name)); // Sort by ID usually groups types
 
-    // 2. Excel Export Logic
+    // 2. Excel Export Logic (Advanced Multi-Sheet)
     const handleExport = () => {
         if (bookings.length === 0) {
             alert("目前沒有報名資料可匯出");
             return;
         }
 
-        const exportData = bookings.map(b => {
-            // Safe date formatting
+        const wb = XLSX.utils.book_new();
+
+        // Helper to format a booking for Excel
+        const formatBooking = (b: BookingRecord) => {
             let dateStr = 'N/A';
             if (b.timestamp && typeof b.timestamp.toDate === 'function') {
                 dateStr = format(b.timestamp.toDate(), 'yyyy-MM-dd HH:mm:ss');
             } else if (b.timestamp) {
-                // Fallback if timestamp is serializable (e.g. from local debug)
                 dateStr = String(b.timestamp);
             }
-
             return {
                 姓名: b.name,
                 報名時間: dateStr,
                 選課ID: b.slots.join(', '),
-                狀態: '已報名' // Hardcoded for simplified version
+                狀態: '已報名'
             };
+        };
+
+        // --- Sheet 1: Master List (總覽) ---
+        const masterData = bookings.map(formatBooking);
+        const wsMaster = XLSX.utils.json_to_sheet(masterData);
+        XLSX.utils.book_append_sheet(wb, wsMaster, "總覽 (Master)");
+
+        // --- Sheet 2~N: Individual Slot Lists (各場次分流) ---
+        // 1. Identify all unique active slots present in current bookings
+        const uniqueSlots = new Set<string>();
+        bookings.forEach(b => b.slots.forEach(s => uniqueSlots.add(s)));
+        const sortedSlots = Array.from(uniqueSlots).sort();
+
+        // 2. Create a sheet for each slot
+        sortedSlots.forEach(slotId => {
+            // Filter bookings that include this specific slot
+            const slotBookings = bookings
+                .filter(b => b.slots.includes(slotId))
+                .map(formatBooking); // Reuse same format
+
+            if (slotBookings.length > 0) {
+                const wsSlot = XLSX.utils.json_to_sheet(slotBookings);
+                // Sheet name limit is 31 chars, slotIds like '6F_A' are safe
+                XLSX.utils.book_append_sheet(wb, wsSlot, slotId);
+            }
         });
 
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "報名名單");
+        // Write file
         XLSX.writeFile(wb, `Soka_Expo_Bookings_${format(new Date(), 'yyyyMMdd_HHmm')}.xlsx`);
     };
 

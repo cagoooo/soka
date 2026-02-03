@@ -2,7 +2,13 @@
 
 ## ✅ Completed Milestones (已完成里程碑)
 
-### **v1.0.7 - Post-Booking Experience (User Fidelity)** (Current)
+### **v1.0.8 - Admin Supercharge (後台進化)** (Current)
+- 📊 **Admin Dashboard Plus**：
+    - **Live Monitor**：導入 Firestore `onSnapshot`，實現儀表板「秒級」自動更新，搭配紅點動畫 (Live Badge) 掌握即時戰況。
+    - **Excel Export**：一鍵匯出完整報名名單 (.xlsx)，自動格式化欄位 (姓名、場次、時間)，優化行政作業流程。
+    - **RWD Optimization**：優化後台按鈕與工具列在手機/電腦版面的顯示，確保操作體驗一致。
+
+### **v1.0.7 - Post-Booking Experience (User Fidelity)**
 - 🔒 **選課鎖定機制 (Lock Logic)**：
     - **防呆鎖定**：已報名用者自動鎖定選課區塊，防止誤觸或重複提交。
     - **視覺階層優化**：
@@ -38,30 +44,21 @@
     - **離線簽到**：支援斷網環境先暫存，連線後自動同步回資料庫。
     - **防重複入場**：掃描後自動標記 "Checked-in"，重複掃描顯示警告。
 
-### 2. 📊 Admin Power-Up (後台十倍速進化)
-**目標**：讓管理員不只是看，還能「控」。
-- **Export to Excel/CSV**：一鍵匯出報名名單，方便教務處進行後續點名或保險作業。
-- **Real-time Monitoring**：
-    - 改用 Firestore `onSnapshot` 監聽模式，實現真正「秒級」的儀表板更新，看著數字即時跳動。
-- **Seed Reset**：一鍵「重置場次餘額」功能 (目前已有按鈕，可再強化防誤觸機制)。
-
-### 3. 🤖 AI Data Insight (AI 數據分析助手)
+### 2. 🤖 AI Data Insight (AI 數據分析助手)
 **目標**：利用收集到的數據提供決策建議。
 - **自然語言查詢**：讓管理者能用問的：「目前哪个系級報名最踴躍？」、「C 場次還剩多少位子？」。
 - **趨勢預測**：根據前 24 小時報名速率，預測何時會額滿，提早發布社群告急貼文。
 
-### 4. 🎮 Gamification (展場互動遊戲化)
+### 3. 🎮 Gamification (展場互動遊戲化)
 **目標**：不只是報名，更增加展場停留時間。
 - **數位集章**：學生到實體攤位掃描 QR Code 集點，集滿 5 點自動在「我的票券」頁面解鎖「兌換券」。
 - **幸運碼系統**：報名成功後獲得一組 Unique ID，活動當天大螢幕即時抽獎。
 
-### 5. 🏗️ Engineering Excellence (工程體質優化)
+### 4. 🏗️ Engineering Excellence (工程體質優化)
 - **Lazy Retry Component**：針對網路不穩定的校園環境，強化 Lazy Load 的自動重試機制 (已初步實作，可模組化)。
 - **Unit Testing**：針對 `SessionSelection` 和 `bookingService` 撰寫單元測試，確保搶票邏輯 (A+B 互斥、名額扣除) 100% 正確。
 - **Accessibility (a11y)**：為鎖定狀態的卡片加入 `aria-disabled` 標籤，提升無障礙體驗。
 
 ### 📌 建議優先順序
-1.  **Admin Export** (行政作業急需，建議優先開發)
-2.  **QR Check-in** (活動現場絕對必要)
-3.  **Real-time Monitoring** (提升管理體驗)
-4.  **Unit Testing** (確保系統長治久安)
+1.  **QR Check-in** (活動現場絕對必要)
+2.  **Unit Testing** (確保系統長治久安)
