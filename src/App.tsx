@@ -1,3 +1,4 @@
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { AuthWrapper } from './components/AuthWrapper';
 import { BookingProvider, useBooking } from './contexts/BookingContext';
 import { useSlots } from './hooks/useSlots';
@@ -7,13 +8,12 @@ import { doc, getDoc } from 'firebase/firestore';
 import { SessionSelection } from './components/SessionSelection';
 import { RegistrationForm } from './components/RegistrationForm';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { submitBooking, type UserDetails } from './services/bookingService';
+import './index.css';
+
 // Lazy load heavy components
 const AdminDashboard = lazy(() => import('./components/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
 const TicketView = lazy(() => import('./components/TicketView').then(module => ({ default: module.TicketView })));
-
-import { submitBooking, type UserDetails } from './services/bookingService';
-import { useState, useEffect, lazy, Suspense } from 'react';
-import './index.css';
 
 // Loading Component
 const Loading = () => (
