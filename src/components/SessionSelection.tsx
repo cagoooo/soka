@@ -10,9 +10,10 @@ import { SessionCardSkeleton } from './skeletons/SessionCardSkeleton';
 // Define props interface
 interface SessionSelectionProps {
     disabled?: boolean;
+    bookedSlotIds?: string[];
 }
 
-export const SessionSelection = ({ disabled = false }: SessionSelectionProps) => {
+export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSelectionProps) => {
     const { slots, loading } = useSlots();
     const { selection, selectSession, isAdmin } = useBooking();
 
@@ -24,7 +25,6 @@ export const SessionSelection = ({ disabled = false }: SessionSelectionProps) =>
         if (disabled) return; // Prevent interaction if disabled
 
         const hasAorB = !!selection.selectedA || !!selection.selectedB;
-        // ... (rest of logic)
         const hasC = !!selection.selectedC;
         const hasD = !!selection.selectedD;
 
@@ -49,9 +49,6 @@ export const SessionSelection = ({ disabled = false }: SessionSelectionProps) =>
         if (conflict) {
             setPendingSelection({ id, type });
             setShowConflictModal(true);
-
-            // UX Improvement: Auto scroll removed to prevent jumping
-            // window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
             selectSession(id, type);
         }
@@ -92,7 +89,6 @@ export const SessionSelection = ({ disabled = false }: SessionSelectionProps) =>
         );
     }
 
-    // 1. Definition must be restored here
     const validSlots = slots.filter(s => !!s.title);
 
     if (validSlots.length === 0) {
@@ -108,10 +104,7 @@ export const SessionSelection = ({ disabled = false }: SessionSelectionProps) =>
                 <p>No active sessions found.</p>
 
                 {/* Only show Seed Button if Admin */}
-                {isAdmin ? ( // Accessing isAdmin from context via selection object? No, likely context destructuring needed update if I didn't verify useBooking return type properly
-                    // Checking useBooking... I updated the type but need to destructure it here
-                    // Let's check below... I only destructured { selection, selectSession }
-                    // I need to update destructuring first.
+                {isAdmin ? (
                     <div style={{ marginTop: '20px' }}>
                         <p style={{ color: '#ef4444', marginBottom: '10px' }}>🔧 管理員權限已啟用</p>
                         <InjectSeedButton />
@@ -135,28 +128,34 @@ export const SessionSelection = ({ disabled = false }: SessionSelectionProps) =>
                 <div className="slot-grid">
                     <AnimatePresence>
                         {filteredSlots.map(slot => {
-                            const isSelected =
-                                selection.selectedA === slot.id ||
-                                selection.selectedB === slot.id ||
-                                selection.selectedC === slot.id ||
-                                selection.selectedD === slot.id;
+                            const isSelected = bookedSlotIds
+                                ? bookedSlotIds.includes(slot.id)
+                                : (
+                                    selection.selectedA === slot.id ||
+                                    selection.selectedB === slot.id ||
+                                    selection.selectedC === slot.id ||
+                                    selection.selectedD === slot.id
+                                );
 
                             // Logic for dimming/disabling
                             let isDimmed = false;
 
-                            // If C is selected, dim A, B, D
-                            if (selection.selectedC && selection.selectedC !== slot.id) {
-                                if (['A', 'B', 'D'].includes(slot.type)) isDimmed = true;
-                                if (slot.type === 'C') isDimmed = true; // Other C's
-                            }
-                            // If D is selected, dim A, B, C
-                            if (selection.selectedD && selection.selectedD !== slot.id) {
-                                if (['A', 'B', 'C'].includes(slot.type)) isDimmed = true;
-                                if (slot.type === 'D') isDimmed = true; // Other D's
-                            }
-                            // If A or B is selected
-                            if ((selection.selectedA || selection.selectedB)) {
-                                if (slot.type === 'C' || slot.type === 'D') isDimmed = true;
+                            // If not booked view, apply dimming logic
+                            if (!bookedSlotIds) {
+                                // If C is selected, dim A, B, D
+                                if (selection.selectedC && selection.selectedC !== slot.id) {
+                                    if (['A', 'B', 'D'].includes(slot.type)) isDimmed = true;
+                                    if (slot.type === 'C') isDimmed = true; // Other C's
+                                }
+                                // If D is selected, dim A, B, C
+                                if (selection.selectedD && selection.selectedD !== slot.id) {
+                                    if (['A', 'B', 'C'].includes(slot.type)) isDimmed = true;
+                                    if (slot.type === 'D') isDimmed = true; // Other D's
+                                }
+                                // If A or B is selected
+                                if ((selection.selectedA || selection.selectedB)) {
+                                    if (slot.type === 'C' || slot.type === 'D') isDimmed = true;
+                                }
                             }
 
                             const isFull = slot.booked >= slot.capacity;
@@ -204,7 +203,7 @@ export const SessionSelection = ({ disabled = false }: SessionSelectionProps) =>
                                         background: '#f1f5f9' // Flat background
                                     } : {}}
                                 >
-                                    {isSelected && !disabled && ( // Hide checkmark if looking at historical data? Or keep it? keeping it for context
+                                    {isSelected && !disabled && (
                                         <motion.div
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
