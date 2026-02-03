@@ -5,6 +5,7 @@ import type { SessionType } from '../types';
 import { SeedButton as InjectSeedButton } from './SeedButton';
 import { ConflictModal } from './ConflictModal';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SessionCardSkeleton } from './skeletons/SessionCardSkeleton';
 
 export const SessionSelection = () => {
     const { slots, loading } = useSlots();
@@ -56,7 +57,32 @@ export const SessionSelection = () => {
         }
     };
 
-    if (loading) return <div className="loading-spinner">載入場次資料中... (若很久未顯示請重整)</div>;
+    if (loading) {
+        const renderSkeletonSection = (title: string, count: number) => (
+            <div className="section-container">
+                <h3>{title}</h3>
+                <div className="slot-grid">
+                    {Array.from({ length: count }).map((_, i) => (
+                        <SessionCardSkeleton key={i} />
+                    ))}
+                </div>
+            </div>
+        );
+
+        return (
+            <div className="selection-container">
+                <div className="combo-row">
+                    {renderSkeletonSection('方案主要活動 (A)', 2)}
+                    {renderSkeletonSection('方案搭配講座 (B)', 1)}
+                </div>
+                <div className="sc-divider">OR</div>
+                <div className="combo-row">
+                    {renderSkeletonSection('專题工作坊 (C)', 2)}
+                    {renderSkeletonSection('特別活動 (D)', 1)}
+                </div>
+            </div>
+        );
+    }
 
     // 1. Definition must be restored here
     const validSlots = slots.filter(s => !!s.title);

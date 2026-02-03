@@ -18,6 +18,8 @@
     "qrcode.react": "^4.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hot-toast": "^2.6.0",
+    "react-loading-skeleton": "^3.5.0",
     "react-router-dom": "^6.30.3",
     "recharts": "^3.7.0",
     "vite-plugin-pwa": "^1.2.0",

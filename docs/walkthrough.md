@@ -113,3 +113,6 @@ A comprehensive backend dashboard for administrators:
     - **Social Sharing**: Added native **Share** button using Web Share API, allowing one-click sharing of the ticket image to social media.
 - **Brand Identity**:
     - **Favicon**: Updated site icon to `SOKA.jpg` for consistent brand recognition across browser tabs and PWA installs.
+- **Micro-Interactions (UX Upgrade)**:
+    - **Toast Notifications**: Replaced jarring system alerts with elegant `react-hot-toast` popups. Optimized `z-index` (999999) to ensure visibility over LINE's in-app browser UI.
+    - **Skeleton Loading**: Implemented "Shimmer" skeletons during data fetching, reducing perceived wait time compared to traditional spinners.

@@ -5,6 +5,7 @@ import type { UserDetails } from '../services/bookingService';
 import html2canvas from 'html2canvas';
 import { useState } from 'react';
 import { isMobile } from '../utils/userAgent';
+import toast from 'react-hot-toast';
 
 interface TicketViewProps {
     bookingId: string;
@@ -25,6 +26,7 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
         const ticketElement = document.getElementById('digital-ticket');
         if (!ticketElement) return null;
 
+        const loadingList = toast.loading('生成圖片中...');
         try {
             const canvas = await html2canvas(ticketElement, {
                 scale: 3, // High resolution for crisp text
@@ -32,10 +34,11 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
                 backgroundColor: '#ffffff',
                 logging: false,
             });
+            toast.dismiss(loadingList);
             return canvas.toDataURL('image/png');
         } catch (error) {
             console.error('Image generation failed:', error);
-            alert('圖片生成失敗，請稍後再試。');
+            toast.error('圖片生成失敗，請稍後再試。', { id: loadingList });
             return null;
         }
     };
@@ -47,6 +50,7 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
         // If mobile, show modal for long-press
         if (isMobile()) {
             setGeneratedImage(image);
+            toast('請長按圖片進行儲存', { icon: '👆' });
             return;
         }
 
@@ -55,6 +59,7 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
         link.href = image;
         link.download = `Soka_Ticket_${bookingId.slice(0, 8)}.png`;
         link.click();
+        toast.success('票券下載成功！');
     };
 
     const handleShare = async () => {
@@ -74,7 +79,7 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
                     files: [file]
                 });
             } else {
-                alert('您的裝置不支援原生分享，請使用下載功能。');
+                toast.error('您的裝置不支援原生分享，請使用下載功能。');
             }
         } catch (error) {
             console.error('Share failed:', error);
@@ -90,7 +95,7 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
                     // Share cancelled or failed
                 }
             } else {
-                alert('分享失敗，請嘗試截圖分享。');
+                toast.error('分享失敗，請嘗試截圖分享。');
             }
         }
     };
@@ -102,10 +107,10 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
             const pwd = prompt("Admin Reset: Please enter password");
             if (pwd === 'soka2026' || pwd === 'admin') {
                 localStorage.removeItem('soka_ticket_2026');
-                alert('Device lock cleared! Reloading...');
-                window.location.reload();
+                toast.success('Device lock cleared! Reloading...');
+                setTimeout(() => window.location.reload(), 1500);
             } else {
-                alert('Invalid password');
+                toast.error('Invalid password');
                 setSecretCount(0);
             }
         }

@@ -4,6 +4,8 @@ import { BookingProvider, useBooking } from './contexts/BookingContext';
 import { useSlots } from './hooks/useSlots';
 import { db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import toast, { Toaster } from 'react-hot-toast';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import { SessionSelection } from './components/SessionSelection';
 import { RegistrationForm } from './components/RegistrationForm';
@@ -124,6 +126,7 @@ const MainContent = () => {
     }
 
     setSubmitting(true);
+    const loadingToast = toast.loading('資料送出中...');
     try {
       const bookingId = await submitBooking(selection, details);
 
@@ -140,10 +143,10 @@ const MainContent = () => {
       setTicketData(newTicketData);
       setShowForm(false);
 
-      // Removed alert to improve UX
-      // alert('報名成功！您的場次已保留。');
+      toast.success('報名成功！您的場次已保留。', { id: loadingToast, duration: 5000 });
     } catch (e: any) {
-      alert(`報名失敗: ${e.message}`);
+      console.error(e);
+      toast.error(`報名失敗: ${e.message}`, { id: loadingToast, duration: 5000 });
     } finally {
       setSubmitting(false);
     }
@@ -241,6 +244,21 @@ function App() {
     <AuthWrapper>
       <BookingProvider>
         <MainContent />
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          containerStyle={{
+            top: 40,
+            zIndex: 999999,
+          }}
+          toastOptions={{
+            style: {
+              background: '#333',
+              color: '#fff',
+              zIndex: 999999,
+            },
+          }}
+        />
       </BookingProvider>
     </AuthWrapper>
   );
