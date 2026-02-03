@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllBookings, type BookingRecord } from '../services/bookingService';
+import { getAllBookings, subscribeToBookings, type BookingRecord } from '../services/bookingService';
 import { SeedButton } from './SeedButton';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import * as XLSX from 'xlsx';
@@ -9,6 +9,18 @@ export const AdminDashboard = () => {
     const [bookings, setBookings] = useState<BookingRecord[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Initial load + Real-time subscription
+    useEffect(() => {
+        const unsubscribe = subscribeToBookings((data) => {
+            setBookings(data);
+            setLoading(false);
+        });
+
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
+    }, []);
+
+    // Manual refresh is technically not needed for data, but can be useful to force-check network if stuck
     const refreshData = async () => {
         setLoading(true);
         try {
@@ -21,10 +33,6 @@ export const AdminDashboard = () => {
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        refreshData();
-    }, []);
 
     // 1. Prepare Chart Data (Session Popularity)
     const slotCounts: Record<string, number> = {};
@@ -78,10 +86,17 @@ export const AdminDashboard = () => {
         <div style={{ textAlign: 'left', width: '100%' }}>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2 style={{ margin: 0, textAlign: 'left', fontSize: '1.5rem' }}>📊 即時看板 Dashboard</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <h2 style={{ margin: 0, textAlign: 'left', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        📊 即時看板 Dashboard
+                        <span className="live-badge">
+                            <span className="live-dot"></span> LIVE
+                        </span>
+                    </h2>
+                </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <button onClick={refreshData} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
-                        🔄 刷新
+                        🔄 Force Refresh
                     </button>
                     <button onClick={handleExport} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem', background: '#10b981' }}>
                         📥 匯出 Excel

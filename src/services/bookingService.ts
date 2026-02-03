@@ -101,7 +101,7 @@ export interface BookingRecord {
 // We might want to include expanded slot details later, but for now IDs are stored
 
 
-import { getDocs, query, orderBy } from 'firebase/firestore';
+import { getDocs, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 export const getAllBookings = async (): Promise<BookingRecord[]> => {
     // Assuming 'bookings' collection exists. 
@@ -122,5 +122,29 @@ export const getAllBookings = async (): Promise<BookingRecord[]> => {
             timestamp: data.timestamp,
             status: (data.status as 'confirmed' | 'cancelled') || 'confirmed'
         } as BookingRecord;
+    });
+};
+
+export const subscribeToBookings = (onUpdate: (data: BookingRecord[]) => void) => {
+    const q = query(collection(db, 'bookings'), orderBy('timestamp', 'desc'));
+
+    // Return the unsubscribe function
+    return onSnapshot(q, (snapshot) => {
+        const bookings = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                bookingId: data.bookingId || 'UNKNOWN',
+                name: data.userName || data.name || 'Unknown',
+                studentId: data.studentId || '',
+                department: data.department || '',
+                slots: data.slots || [],
+                timestamp: data.timestamp,
+                status: (data.status as 'confirmed' | 'cancelled') || 'confirmed'
+            } as BookingRecord;
+        });
+        onUpdate(bookings);
+    }, (error) => {
+        console.error("Error watching bookings:", error);
     });
 };
