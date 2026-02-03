@@ -21,6 +21,9 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
     const [pendingSelection, setPendingSelection] = useState<{ id: string, type: SessionType } | null>(null);
     const [showConflictModal, setShowConflictModal] = useState(false);
 
+    // Smart Suggestion Logic (Debounced to strictly once per unique pair)
+    const lastToastKey = useRef<string | null>(null);
+
     useEffect(() => {
         const { selectedA, selectedB } = selection;
         // Only trigger if both A and B are selected
