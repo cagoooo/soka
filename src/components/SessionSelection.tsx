@@ -189,16 +189,22 @@ export const SessionSelection = ({ disabled = false }: SessionSelectionProps) =>
                                     layoutId={slot.id}
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{
-                                        opacity: isDimmed ? 0.4 : 1,
+                                        opacity: isDimmed || disabled ? 0.4 : 1, // Lower opacity if disabled
                                         scale: isSelected ? 1.02 : 1,
-                                        filter: isFull ? 'grayscale(100%)' : 'none'
+                                        filter: isFull ? 'grayscale(100%)' : (disabled ? 'grayscale(50%)' : 'none'), // Move disabled filter here
                                     }}
                                     whileHover={(!isFull && !isDimmed && !disabled) ? { y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.1)' } : {}}
+                                    whileTap={(!isFull && !isDimmed && !disabled) ? { scale: 0.98 } : {}} // Prevent tap scale
                                     onClick={() => !isFull && !disabled && handleSlotClick(slot.id, slot.type)}
                                     className={`slot-card type-${slot.type} ${isSelected ? 'selected' : ''} ${isFull ? 'full' : ''}`}
-                                    style={disabled ? { cursor: 'not-allowed', opacity: 0.7, filter: 'grayscale(50%)' } : {}}
+                                    style={disabled ? {
+                                        cursor: 'default', // Changed from not-allowed to default for cleaner feel
+                                        pointerEvents: 'none', // Effectively disable all mouse events
+                                        border: '1px solid transparent', // Remove outline
+                                        background: '#f1f5f9' // Flat background
+                                    } : {}}
                                 >
-                                    {isSelected && (
+                                    {isSelected && !disabled && ( // Hide checkmark if looking at historical data? Or keep it? keeping it for context
                                         <motion.div
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
@@ -206,6 +212,9 @@ export const SessionSelection = ({ disabled = false }: SessionSelectionProps) =>
                                         >
                                             ✓
                                         </motion.div>
+                                    )}
+                                    {isSelected && disabled && ( // Static checkmark for booked view
+                                        <div className="check-mark">✓</div>
                                     )}
 
                                     {/* Sold Out Overlay */}

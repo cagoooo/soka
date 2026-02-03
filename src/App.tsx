@@ -200,10 +200,21 @@ const MainContent = () => {
           {ticketData ? (
             <button
               className="btn-primary"
-              style={{ fontSize: '1.2rem', padding: '15px 40px', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' }}
+              style={{
+                fontSize: '1.2rem',
+                padding: '15px 40px',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', // Success Green
+                boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
+                display: 'inline-flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                lineHeight: '1.2'
+              }}
               onClick={() => setViewingTicket(true)}
             >
-              查看我的票券 🎫
+              <span style={{ fontSize: '0.9rem', opacity: 0.9 }}>🎉 已完成報名</span>
+              <span style={{ fontWeight: 'bold' }}>查看我的票券 🎫</span>
             </button>
           ) : (
             <button
