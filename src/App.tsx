@@ -281,11 +281,15 @@ const MainContent = () => {
   );
 };
 
+import { ErrorBoundary } from './components/ErrorBoundary';
+
 function App() {
   return (
     <AuthWrapper>
       <BookingProvider>
-        <MainContent />
+        <ErrorBoundary>
+          <MainContent />
+        </ErrorBoundary>
         <Toaster
           position="top-center"
           reverseOrder={false}

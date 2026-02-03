@@ -2,12 +2,19 @@
 
 ## ✅ Completed Milestones (已完成里程碑)
 
-### **v1.0.9 - Administrative Precision (行政優化)** (Current)
+### **v1.1.0 - Engineering Excellence (工程體質優化)** (Current)
+- 🏗️ **Core Stability**：
+    - **PWA Offline Mode**：強化 Service Worker 快取策略，並啟用 Firestore Persistence。實測在飛航模式下，仍能秒開票券並顯示 QR Code，確保地下室/電梯無訊號也暢行無阻。
+    - **Unit Testing**：引入 `Vitest` 測試框架，為核心訂票邏輯 (`bookingService`) 建立單元測試，防止未來修改功能時發生邏輯倒退 (Regression)。
+    - **Accessibility (a11y)**：全面導入 ARIA 標準 (ROLE, LABEL)，支援鍵盤 Tab 導航與螢幕閱讀器，打造友善包容的數位校園環境。
+
+### **v1.0.9 - Administrative Precision (行政優化)**
 - 🖨️ **Smart PDF Export**：
     - **Native A4 Layout**：針對瀏覽器原生列印功能優化，去除多餘 UI，只保留核心表格。
     - **Header Mapping**：將系統代號 (2F_A) 自動轉換為完整活動名稱 (如「躍動潛能...」)，清晰易讀。
     - **Signature Space**：每列高度強制設定為 50px，提供充足的手寫簽名空間。
     - **Page Break Logic**：智慧分頁，確保每個場次的簽到表獨立一頁，方便分發給不同負責人。
+
 
 ### **v1.0.8 - Admin Supercharge (後台進化)**
 - 📊 **Admin Dashboard Plus**：
@@ -89,7 +96,21 @@
 - **Accessibility (a11y)**：
     - 為鎖定狀態的卡片加入 `aria-disabled` 標籤，提升無障礙體驗，符合校園網站標準。
 
-### 📌 建議優先順序
+### 6. 📊 Real-time Visual Command Center (戰情室應用)
+**目標**：為活動當天指揮中心提供一個超大螢幕儀表板。
+- **3D Venue Map**：
+    - 繪製 2F/3F/5F/6F 的簡單 3D 平面圖，用熱力圖顏色即時顯示各區人流擁擠度 (根據掃碼數據)。
+- **Alert System**：
+    - 當某個展區人數超過 80% 預警值，大螢幕自動閃爍紅燈，通知工作人員進行人流管制。
+
+### 7. � Post-Event Feedback Loop (活動後回饋閉環)
+**目標**：收集質化數據，作為明年活動改進依據。
+- **Smart Form**：
+    - 活動結束後 (時間觸發)，APP 首頁自動切換為「滿意度調查問卷」。
+    - 填寫完畢自動發送「感謝小卡」或「數位證書」到本機相簿，增加填寫誘因。
+
+### �📌 建議優先順序
 1.  **QR Check-in** (活動現場絕對必要，效益最高)
-2.  **PWA Offline Mode** (確保活動當天體驗流暢)
-3.  **Gamification** (若行有餘力，可增加活動趣味性)
+2.  **Gamification** (增加互動性，讓同學不只是來簽到)
+3.  **Real-time Visual Command Center** (若有大螢幕展示需求，視覺效果極佳)
+
