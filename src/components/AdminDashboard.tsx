@@ -96,7 +96,7 @@ export const AdminDashboard = () => {
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <button onClick={refreshData} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
-                        🔄 Force Refresh
+                        🔄 強制刷新
                     </button>
                     <button onClick={handleExport} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem', background: '#10b981' }}>
                         📥 匯出 Excel
