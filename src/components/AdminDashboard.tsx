@@ -58,8 +58,6 @@ export const AdminDashboard = () => {
 
             return {
                 姓名: b.name,
-                電話: b.phone,
-                Email: b.email || '', // Added Email
                 報名時間: dateStr,
                 選課ID: b.slots.join(', '),
                 狀態: '已報名' // Hardcoded for simplified version

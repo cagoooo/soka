@@ -82,7 +82,13 @@ A comprehensive backend dashboard for administrators:
 - **UI Optimizations**:
     - **Admin Charts**: Refactored to Flexbox layout to fix label truncation and improved mobile responsiveness.
 
-## 🛠️ v1.0.2 Updates (Latest)
+## 🛠️ v1.0.2 Updates
 - **Session Data Updates**:
     - **3F (A/B)**: Updated to combined "Positive Parenting / Professional Course" booths. Capacity adjusted to **160**.
     - **6F_C & 6F_D**: Capacity increased from 60 to **70**.
+
+## 🛠️ v1.0.3 Updates (Latest)
+- **Privacy & Data Minimization**:
+    - **Registration**: Removed `Phone` and `Email` fields from the registration form. Now only requires `Name`.
+    - **Admin Export**: Removed `Phone` and `Email` columns from the Excel export.
+    - **Digital Ticket**: Removed phone number display from the ticket view.

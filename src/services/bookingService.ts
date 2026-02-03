@@ -4,8 +4,6 @@ import type { BookingState } from '../types';
 
 export interface UserDetails {
     name: string;
-    email: string; // Optional if anon? User said "Registration Website". Usually Name/Phone/ID needed.
-    phone: string;
     studentId?: string;
 }
 
@@ -50,8 +48,7 @@ export const submitBooking = async (selection: BookingState, userDetails: UserDe
         transaction.set(bookingRef, {
             userId: auth.currentUser!.uid,
             userName: userDetails.name,
-            userPhone: userDetails.phone,
-            userEmail: userDetails.email || '', // Added Email
+            // phone and email removed per requirement
             slots: slotsToBook,
             selectionData: selection,
             timestamp: serverTimestamp(),
@@ -66,8 +63,7 @@ export interface BookingRecord {
     id: string; // Firestore Document ID
     bookingId: string; // Human-readable ID (e.g. SOKA-2026-XYZ)
     name: string;
-    phone: string;
-    email?: string; // Added Email field
+    // phone and email removed
     studentId?: string; // Optional for compatibility with old records
     department?: string; // Optional for compatibility with old records
     slots: string[];
@@ -90,9 +86,8 @@ export const getAllBookings = async (): Promise<BookingRecord[]> => {
         return {
             id: doc.id,
             bookingId: data.bookingId || 'UNKNOWN',
-            name: data.userName || data.name || 'Unknown', // Fixed mapping
-            phone: data.userPhone || data.phone || '', // Fixed mapping
-            email: data.userEmail || data.email || '', // Added Email mapping
+            name: data.userName || data.name || 'Unknown',
+            // Phone and Email removed
             studentId: data.studentId || '',
             department: data.department || '',
             slots: data.slots || [],

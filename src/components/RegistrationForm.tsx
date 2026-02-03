@@ -10,8 +10,6 @@ interface Props {
 export const RegistrationForm = ({ onSubmit, onCancel, loading }: Props) => {
   const [formData, setFormData] = useState<UserDetails>({
     name: '',
-    phone: '',
-    email: '',
     studentId: ''
   });
 
@@ -64,33 +62,6 @@ export const RegistrationForm = ({ onSubmit, onCancel, loading }: Props) => {
               placeholder="請輸入姓名 / Your Name"
               value={formData.name}
               onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              style={{ background: '#f9fafb' }}
-            />
-          </div>
-
-          <div>
-            <label className="slot-name" style={{ fontSize: '1.1rem', marginBottom: '10px', display: 'block', color: '#374151' }}>
-              📞 電話 Phone
-            </label>
-            <input
-              required
-              type="tel"
-              placeholder="09xx-xxx-xxx"
-              value={formData.phone}
-              onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              style={{ background: '#f9fafb' }}
-            />
-          </div>
-
-          <div>
-            <label className="slot-name" style={{ fontSize: '1.1rem', marginBottom: '10px', display: 'block', color: '#374151' }}>
-              ✉️ Email (選填)
-            </label>
-            <input
-              type="email"
-              placeholder="example@email.com"
-              value={formData.email}
-              onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
               style={{ background: '#f9fafb' }}
             />
           </div>

@@ -120,11 +120,7 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
                         <span style={{ color: '#64748b', fontSize: '0.9rem' }}>姓名</span>
                         <span style={{ fontWeight: 600, color: '#1e293b' }}>{userDetails.name}</span>
                     </div>
-                    {/* Mask phone for privacy in display */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '25px' }}>
-                        <span style={{ color: '#64748b', fontSize: '0.9rem' }}>電話</span>
-                        <span style={{ fontWeight: 600, color: '#1e293b' }}>{userDetails.phone.replace(/(\d{4})\d{3}(\d{3})/, '$1***$2')}</span>
-                    </div>
+
 
                     <h3 style={{ fontSize: '0.95rem', color: '#475569', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ fontSize: '1.2rem' }}>📅</span> 預約場次
