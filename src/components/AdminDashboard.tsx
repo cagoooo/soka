@@ -131,14 +131,12 @@ export const AdminDashboard = () => {
 
         // Helper to get descriptive title
         const getSlotTitle = (slotId: string) => {
-            const type = slotId.split('_')[1]; // e.g., 2F_A -> A
-            switch (type) {
-                case 'A': return '方案主要活動 (A)';
-                case 'B': return '方案主要活動 (B)';
-                case 'C': return '專題工作坊 (C)';
-                case 'D': return '專題工作坊 (D)';
-                default: return '特別活動';
-            }
+            if (slotId.startsWith('2F')) return '躍動潛能：音樂與生命的對話';
+            if (slotId.startsWith('3F')) return '正向教養攤位*4攤 / 專業課程攤位*4攤';
+            if (slotId.startsWith('5F')) return '創價 OPEN SPACE：無劇本思維冒險';
+            if (slotId === '6F_C') return '《優雅接住，情緒的浪》';
+            if (slotId === '6F_D') return '《從餐桌到生命的美利善》';
+            return slotId; // Fallback
         };
 
         // Generate HTML Content
