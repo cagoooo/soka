@@ -211,40 +211,43 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                 );
 
                             // Logic for dimming/disabling
-                            let isDimmed = false;
+                            let isGroupDimmed = false;
+                            let isStrictlyDisabled = false;
 
                             // If not booked view, apply dimming logic
                             if (!bookedSlotIds) {
+                                // --- Group 1: Group Conflict Dimming (Clickable -> triggers modal) ---
                                 // If C is selected, dim A, B, D
                                 if (selection.selectedC && selection.selectedC !== slot.id) {
-                                    if (['A', 'B', 'D'].includes(slot.type)) isDimmed = true;
-                                    if (slot.type === 'C') isDimmed = true; // Other C's
+                                    if (['A', 'B', 'D'].includes(slot.type)) isGroupDimmed = true;
+                                    if (slot.type === 'C') isGroupDimmed = true; // Other C's
                                 }
                                 // If D is selected, dim A, B, C
                                 if (selection.selectedD && selection.selectedD !== slot.id) {
-                                    if (['A', 'B', 'C'].includes(slot.type)) isDimmed = true;
-                                    if (slot.type === 'D') isDimmed = true; // Other D's
+                                    if (['A', 'B', 'C'].includes(slot.type)) isGroupDimmed = true;
+                                    if (slot.type === 'D') isGroupDimmed = true; // Other D's
                                 }
                                 // If A or B is selected
                                 if ((selection.selectedA || selection.selectedB)) {
-                                    if (slot.type === 'C' || slot.type === 'D') isDimmed = true;
+                                    if (slot.type === 'C' || slot.type === 'D') isGroupDimmed = true;
                                 }
 
-                                // --- Strict Exclusion for 2F & 5F ---
+                                // --- Group 2: Strict Exclusion for 2F & 5F (Unclickable) ---
                                 const [floor, type] = slot.id.split('_');
                                 if (floor === '2F' || floor === '5F') {
                                     const otherType = type === 'A' ? 'B' : 'A';
                                     const selectedOther = otherType === 'A' ? selection.selectedA : selection.selectedB;
 
-                                    // If the OTHER type is selected on the SAME floor, dim this one
-                                    // e.g. if I am 2F_B, and 2F_A is selected -> dim me
+                                    // If the OTHER type is selected on the SAME floor, STRICTLY DISABLE this one
                                     if (selectedOther && selectedOther.startsWith(`${floor}_`)) {
-                                        isDimmed = true;
+                                        isStrictlyDisabled = true;
                                     }
                                 }
                             }
 
                             const isFull = slot.booked >= slot.capacity;
+                            // Effective dimmed state for visual styling
+                            const isVisuallyDimmed = isGroupDimmed || isStrictlyDisabled;
 
                             // UI Logic for Availability
                             const remaining = slot.capacity - slot.booked;
@@ -274,23 +277,22 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                     layoutId={slot.id}
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{
-                                        opacity: (disabled || isDimmed) && !isSelected ? 0.4 : 1, // Dim if disabled OR dimmed (and not selected)
+                                        opacity: (disabled || isVisuallyDimmed) && !isSelected ? 0.4 : 1, // Dim if disabled, group-dimmed, or strictly-disabled
                                         scale: isSelected ? 1.02 : 1,
-                                        filter: (isFull || isDimmed) && !isSelected ? 'grayscale(100%)' : (disabled && !isSelected ? 'grayscale(100%)' : 'none'), // Grayscale if full OR dimmed OR disabled
+                                        filter: (isFull || isVisuallyDimmed) && !isSelected ? 'grayscale(100%)' : (disabled && !isSelected ? 'grayscale(100%)' : 'none'),
                                     }}
-                                    whileHover={(!isFull && !isDimmed && !disabled) ? { y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.1)' } : {}}
-                                    whileTap={(!isFull && !isDimmed && !disabled) ? { scale: 0.98 } : {}}
-                                    onClick={() => !isFull && !disabled && !isDimmed && handleSlotClick(slot.id, slot.type)}
+                                    whileHover={(!isFull && !isVisuallyDimmed && !disabled) ? { y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.1)' } : {}}
+                                    whileTap={(!isFull && !isVisuallyDimmed && !disabled) ? { scale: 0.98 } : {}}
+                                    // onClick: Allow click if group-dimmed (triggers modal), but BLOCK if strictly disabled
+                                    onClick={() => !isFull && !disabled && !isStrictlyDisabled && handleSlotClick(slot.id, slot.type)}
                                     className={`slot-card type-${slot.type} ${isSelected ? 'selected' : ''} ${isFull ? 'full' : ''}`}
-                                    style={disabled ? {
+                                    style={(disabled || isStrictlyDisabled) ? { // Apply "disabled" styles only if truly strictly disabled (or prop disabled)
                                         cursor: 'default',
-                                        pointerEvents: 'none',
-                                        // If selected, keep the card looking "rich" but static
-                                        // If NOT selected, flatten it
+                                        pointerEvents: isStrictlyDisabled ? 'none' : 'auto', // Ensure strictly disabled cannot capture pointer overrides
                                         border: isSelected ? undefined : '1px solid transparent',
                                         background: isSelected ? undefined : '#f1f5f9',
-                                        boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.1)' : 'none', // Add distinct static shadow for booked item
-                                        transform: isSelected ? 'scale(1.02)' : 'none' // Ensure scale persists statically? (animate handles this but style helps)
+                                        boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
+                                        transform: isSelected ? 'scale(1.02)' : 'none'
                                     } : {}}
                                 >
                                     {isSelected && ( // Consolidated checkmark
