@@ -7,11 +7,34 @@ import { doc, getDoc } from 'firebase/firestore';
 import { SessionSelection } from './components/SessionSelection';
 import { RegistrationForm } from './components/RegistrationForm';
 import { AdminLoginModal } from './components/AdminLoginModal';
-import { AdminDashboard } from './components/AdminDashboard';
-import { TicketView } from './components/TicketView';
+// Lazy load heavy components
+const AdminDashboard = lazy(() => import('./components/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
+const TicketView = lazy(() => import('./components/TicketView').then(module => ({ default: module.TicketView })));
+
 import { submitBooking, type UserDetails } from './services/bookingService';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import './index.css';
+
+// Loading Component
+const Loading = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', flexDirection: 'column', gap: '15px' }}>
+    <div className="spinner" style={{
+      width: '40px',
+      height: '40px',
+      border: '4px solid #f3f3f3',
+      borderTop: '4px solid #3498db',
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite'
+    }} />
+    <span style={{ color: '#64748b' }}>Loading...</span>
+    <style>{`
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `}</style>
+  </div>
+);
 
 interface TicketData {
   bookingId: string;
@@ -136,12 +159,14 @@ const MainContent = () => {
   if (ticketData) {
     return (
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-        <TicketView
-          bookingId={ticketData.bookingId}
-          userDetails={ticketData.userDetails}
-          selectedSlotIds={ticketData.selectedSlotIds}
-          onClose={handleCloseTicket}
-        />
+        <Suspense fallback={<Loading />}>
+          <TicketView
+            bookingId={ticketData.bookingId}
+            userDetails={ticketData.userDetails}
+            selectedSlotIds={ticketData.selectedSlotIds}
+            onClose={handleCloseTicket}
+          />
+        </Suspense>
       </div>
     );
   }
@@ -189,7 +214,9 @@ const MainContent = () => {
           border: '1px solid rgba(255,255,255,0.5)',
           boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)'
         }}>
-          <AdminDashboard />
+          <Suspense fallback={<Loading />}>
+            <AdminDashboard />
+          </Suspense>
         </div>
       )}
 

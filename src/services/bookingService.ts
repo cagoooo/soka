@@ -7,56 +7,84 @@ export interface UserDetails {
     studentId?: string;
 }
 
+// Helper for random delay to prevent thundering herd
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const submitBooking = async (selection: BookingState, userDetails: UserDetails) => {
     if (!auth.currentUser) throw new Error("Must be logged in");
 
-    const bookingRef = doc(collection(db, 'bookings'));
+    const MAX_RETRIES = 5;
+    let attempt = 0;
 
-    await runTransaction(db, async (transaction) => {
-        // 1. Identify slots to book
-        const slotsToBook: string[] = [];
-        if (selection.selectedC) slotsToBook.push(selection.selectedC);
-        if (selection.selectedD) slotsToBook.push(selection.selectedD);
-        if (selection.selectedA) slotsToBook.push(selection.selectedA);
-        if (selection.selectedB) slotsToBook.push(selection.selectedB);
+    while (attempt < MAX_RETRIES) {
+        try {
+            const bookingRef = doc(collection(db, 'bookings'));
 
-        if (slotsToBook.length === 0) throw new Error("No sessions selected");
+            await runTransaction(db, async (transaction) => {
+                // 1. Identify slots to book
+                const slotsToBook: string[] = [];
+                if (selection.selectedC) slotsToBook.push(selection.selectedC);
+                if (selection.selectedD) slotsToBook.push(selection.selectedD);
+                if (selection.selectedA) slotsToBook.push(selection.selectedA);
+                if (selection.selectedB) slotsToBook.push(selection.selectedB);
 
-        // 2. Read all slots fresh
-        const slotDocs = await Promise.all(slotsToBook.map(id => transaction.get(doc(db, 'slots', id))));
+                if (slotsToBook.length === 0) throw new Error("No sessions selected");
 
-        // 3. Check capacity
-        slotDocs.forEach(slotDoc => {
-            if (!slotDoc.exists()) throw new Error(`Slot ${slotDoc.id} not found`);
-            const data = slotDoc.data();
-            if (data.booked >= data.capacity) {
-                throw new Error(`場次 ${data.name} 已額滿，請重新選擇。`);
-            }
-        });
+                // 2. Read all slots fresh
+                const slotDocs = await Promise.all(slotsToBook.map(id => transaction.get(doc(db, 'slots', id))));
 
-        // 4. Updates
-        // Increment booked count
-        slotDocs.forEach(slotDoc => {
-            const data = slotDoc.data();
-            if (!data) throw new Error("Slot data missing");
-            transaction.update(slotDoc.ref, {
-                booked: data.booked + 1
+                // 3. Check capacity
+                slotDocs.forEach(slotDoc => {
+                    if (!slotDoc.exists()) throw new Error(`Slot ${slotDoc.id} not found`);
+                    const data = slotDoc.data();
+                    if (data.booked >= data.capacity) {
+                        throw new Error(`場次 ${data.name} 已額滿，請重新選擇。`);
+                    }
+                });
+
+                // 4. Updates
+                // Increment booked count
+                slotDocs.forEach(slotDoc => {
+                    const data = slotDoc.data();
+                    if (!data) throw new Error("Slot data missing");
+                    transaction.update(slotDoc.ref, {
+                        booked: data.booked + 1
+                    });
+                });
+
+                // Create booking record
+                transaction.set(bookingRef, {
+                    userId: auth.currentUser!.uid,
+                    userName: userDetails.name,
+                    // phone and email removed per requirement
+                    slots: slotsToBook,
+                    selectionData: selection,
+                    timestamp: serverTimestamp(),
+                    status: 'confirmed'
+                });
             });
-        });
 
-        // Create booking record
-        transaction.set(bookingRef, {
-            userId: auth.currentUser!.uid,
-            userName: userDetails.name,
-            // phone and email removed per requirement
-            slots: slotsToBook,
-            selectionData: selection,
-            timestamp: serverTimestamp(),
-            status: 'confirmed'
-        });
-    });
+            return bookingRef.id; // Success!
 
-    return bookingRef.id;
+        } catch (error: any) {
+            console.warn(`Booking attempt ${attempt + 1} failed:`, error);
+
+            // If it's a specific logic error (like "Full"), throw immediately, don't retry.
+            if (error.message && error.message.includes('已額滿')) {
+                throw error;
+            }
+
+            attempt++;
+            if (attempt >= MAX_RETRIES) {
+                throw new Error("System is busy (Max Retries), please try again.");
+            }
+
+            // Exponential Backoff + Jitter
+            const waitTime = Math.pow(2, attempt) * 100 + Math.random() * 200;
+            await delay(waitTime);
+        }
+    }
+    throw new Error("Unexpected booking failure");
 };
 
 export interface BookingRecord {
