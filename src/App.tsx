@@ -274,6 +274,15 @@ const MainContent = () => {
         >
           Admin Access
         </span>
+        <br />
+        <a
+          href="https://cagoooo.github.io/Akai/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="akai-badge"
+        >
+          ✨ Made by 阿凱老師
+        </a>
       </footer>
 
       <AdminLoginModal isOpen={showAdminLogin} onClose={() => setShowAdminLogin(false)} />
