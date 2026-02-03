@@ -61,7 +61,12 @@ export const ConfirmBookingModal = ({ isOpen, onConfirm, onCancel, selectedIds }
                                     borderLeft: '4px solid #6366f1'
                                 }}>
                                     <div style={{ fontWeight: 700, color: '#334155' }}>{slot?.title}</div>
-                                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px' }}>📍 {slot?.location}</div>
+                                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px', display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>📍 {slot?.location}</span>
+                                        <span style={{ color: '#0ea5e9', fontWeight: 600 }}>
+                                            ⏱ {(slot?.type === 'C' || slot?.type === 'D') ? '40分鐘' : '20分鐘'}
+                                        </span>
+                                    </div>
                                 </div>
                             ))}
                         </div>
