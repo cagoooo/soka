@@ -475,49 +475,53 @@ input:focus {
 }
 
 /* Dashboard RWD */
+/* Shared Button Styles (Global) */
+.mobile-icon-btn {
+  white-space: nowrap !important;
+  /* CRITICAL: Prevent wrapping everywhere */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Dashboard RWD */
 @media (max-width: 768px) {
   .dashboard-header {
     flex-direction: column;
     align-items: stretch !important;
-    /* Changed from flex-start to stretch for full width */
   }
 
   .dashboard-actions {
     display: grid;
-    /* Use Grid for better control */
     grid-template-columns: 1fr 1fr;
-    /* Explicit 50% split */
     gap: 10px;
     width: 100%;
   }
 
   .mobile-icon-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
     padding: 12px 8px !important;
-    /* Reduce horizontal padding */
     font-size: 0.9rem !important;
-    white-space: nowrap;
-    /* CRITICAL: Prevent wrapping */
     width: 100%;
   }
 
-  /* For very small screens (iPhone SE / Fold) */
   @media (max-width: 360px) {
     .dashboard-actions {
       grid-template-columns: 1fr;
-      /* Stack on tiny screens */
     }
   }
 }
 
-/* Desktop default for actions */
+/* Desktop Styles */
 @media (min-width: 769px) {
   .dashboard-actions {
     display: flex;
-    gap: 10px;
+    gap: 12px;
+  }
+
+  .mobile-icon-btn {
+    min-width: 130px;
+    /* Ensure minimum width on desktop */
   }
 }
 
