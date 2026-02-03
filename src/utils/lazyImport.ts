@@ -26,7 +26,19 @@ export const lazyRetry = <T extends ComponentType<any>>(
             if (isChunkError && !hasRetried) {
                 console.log(`Reloading page to recover from missing chunk for ${name}...`);
                 window.sessionStorage.setItem(`retry-${name}`, 'true');
-                window.location.reload();
+
+                // Aggressive cache clearing for PWA/SW
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(registrations => {
+                        for (const registration of registrations) {
+                            registration.unregister();
+                        }
+                        window.location.reload();
+                    });
+                } else {
+                    window.location.reload();
+                }
+
                 // Return a promise that never resolves (waiting for reload)
                 return new Promise(() => { });
             }
