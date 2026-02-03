@@ -56,6 +56,7 @@ const MainContent = () => {
   // New State for Custom Confirmation Modal
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingUserDetails, setPendingUserDetails] = useState<UserDetails | null>(null);
+  const [viewingTicket, setViewingTicket] = useState(false);
 
   // Device Restriction: Check for existing ticket on mount AND check for system reset
   useEffect(() => {
@@ -98,6 +99,7 @@ const MainContent = () => {
       }
 
       setTicketData(savedTicket);
+      setViewingTicket(true); // Default to showing ticket
     };
 
     checkSystemStatus();
@@ -146,6 +148,7 @@ const MainContent = () => {
       localStorage.setItem('soka_ticket_2026', JSON.stringify(newTicketData));
 
       setTicketData(newTicketData);
+      setViewingTicket(true);
       setShowForm(false);
 
       toast.success('報名成功！您的場次已保留。', { id: loadingToast, duration: 5000 });
@@ -162,10 +165,10 @@ const MainContent = () => {
     // Optional: If you want "Close" to clear the lock, uncomment the next line. 
     // But user requested "binding", so we keep it. 
     // localStorage.removeItem('soka_ticket_2026'); 
-    window.location.reload();
+    setViewingTicket(false);
   };
 
-  if (ticketData) {
+  if (viewingTicket && ticketData) {
     return (
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
         <Suspense fallback={<Loading />}>
@@ -193,14 +196,24 @@ const MainContent = () => {
         <SessionSelection />
 
         <div style={{ textAlign: 'center', marginTop: '30px' }}>
-          <button
-            className="btn-primary"
-            disabled={!isValid}
-            style={{ opacity: isValid ? 1 : 0.5, fontSize: '1.2rem', padding: '15px 40px' }}
-            onClick={handleNext}
-          >
-            {isValid ? '下一步：填寫資料' : "創價教育實踐趴 Let's Go！"}
-          </button>
+          {ticketData ? (
+            <button
+              className="btn-primary"
+              style={{ fontSize: '1.2rem', padding: '15px 40px', background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' }}
+              onClick={() => setViewingTicket(true)}
+            >
+              查看我的票券 🎫
+            </button>
+          ) : (
+            <button
+              className="btn-primary"
+              disabled={!isValid}
+              style={{ opacity: isValid ? 1 : 0.5, fontSize: '1.2rem', padding: '15px 40px' }}
+              onClick={handleNext}
+            >
+              {isValid ? '下一步：填寫資料' : "創價教育實踐趴 Let's Go！"}
+            </button>
+          )}
         </div>
       </div>
 

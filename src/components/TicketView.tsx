@@ -262,7 +262,7 @@ export const TicketView = ({ bookingId, userDetails, selectedSlotIds, onClose }:
                         onClick={onClose}
                         style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '16px', background: 'transparent', color: '#64748b', cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem' }}
                     >
-                        暫時關閉
+                        返回首頁
                     </motion.button>
                 </div>
             </div>
