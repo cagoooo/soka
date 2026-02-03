@@ -1,7 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { AuthWrapper } from './components/AuthWrapper';
 import { BookingProvider, useBooking } from './contexts/BookingContext';
-import { useSlots } from './hooks/useSlots';
 import { db } from './firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import toast, { Toaster } from 'react-hot-toast';
@@ -10,6 +9,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { SessionSelection } from './components/SessionSelection';
 import { RegistrationForm } from './components/RegistrationForm';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { ConfirmBookingModal } from './components/ConfirmBookingModal';
 import { submitBooking, type UserDetails } from './services/bookingService';
 import './index.css';
 
@@ -47,11 +47,15 @@ interface TicketData {
 
 const MainContent = () => {
   const { isValid, selection, isAdmin } = useBooking();
-  const { slots } = useSlots(); // Get slots for confirmation
+  // slots removed as it is now used inside ConfirmBookingModal
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [ticketData, setTicketData] = useState<TicketData | null>(null);
+
+  // New State for Custom Confirmation Modal
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingUserDetails, setPendingUserDetails] = useState<UserDetails | null>(null);
 
   // Device Restriction: Check for existing ticket on mount AND check for system reset
   useEffect(() => {
@@ -103,36 +107,37 @@ const MainContent = () => {
     if (isValid) setShowForm(true);
   };
 
-  const handleConfirm = async (details: UserDetails) => {
-    // 1. Prepare Summary for Confirmation
+  // Helper to get selected IDs
+  const getSelectedIds = () => {
     const selectedIds: string[] = [];
     if (selection.selectedC) selectedIds.push(selection.selectedC);
     if (selection.selectedD) selectedIds.push(selection.selectedD);
     if (selection.selectedA) selectedIds.push(selection.selectedA);
     if (selection.selectedB) selectedIds.push(selection.selectedB);
+    return selectedIds;
+  };
 
-    const selectedTitles = selectedIds
-      .map(id => {
-        const s = slots.find(item => item.id === id);
-        return s ? `[${s.type}場-${s.location}] ${s.title}` : null;
-      })
-      .filter(Boolean)
-      .join('\n- ');
+  // Step 1: Open Confirmation Modal
+  const handleRegistrationSubmit = (details: UserDetails) => {
+    setPendingUserDetails(details);
+    setShowConfirmModal(true);
+  };
 
-    const confirmMessage = `請確認您的報名場次：\n\n- ${selectedTitles}\n\n⚠️ 重要提醒：\n報名成功後，此裝置將會綁定票券，無法再次報名。\n\n確定要送出嗎？`;
+  // Step 2: Execute Booking after Modal Confirmation
+  const executeBooking = async () => {
+    if (!pendingUserDetails) return;
 
-    if (!window.confirm(confirmMessage)) {
-      return; // User cancelled
-    }
-
+    setShowConfirmModal(false); // Close confirmation modal
     setSubmitting(true);
     const loadingToast = toast.loading('資料送出中...');
+
     try {
-      const bookingId = await submitBooking(selection, details);
+      const bookingId = await submitBooking(selection, pendingUserDetails);
+      const selectedIds = getSelectedIds();
 
       const newTicketData: TicketData = {
         bookingId,
-        userDetails: details,
+        userDetails: pendingUserDetails,
         selectedSlotIds: selectedIds,
         timestamp: Date.now() // Record creation time
       };
@@ -149,6 +154,7 @@ const MainContent = () => {
       toast.error(`報名失敗: ${e.message}`, { id: loadingToast, duration: 5000 });
     } finally {
       setSubmitting(false);
+      setPendingUserDetails(null);
     }
   };
 
@@ -200,11 +206,19 @@ const MainContent = () => {
 
       {showForm && (
         <RegistrationForm
-          onSubmit={handleConfirm}
+          onSubmit={handleRegistrationSubmit}
           onCancel={() => setShowForm(false)}
           loading={submitting}
         />
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmBookingModal
+        isOpen={showConfirmModal}
+        onConfirm={executeBooking}
+        onCancel={() => setShowConfirmModal(false)}
+        selectedIds={getSelectedIds()}
+      />
 
       {/* Admin Section */}
       {isAdmin && (

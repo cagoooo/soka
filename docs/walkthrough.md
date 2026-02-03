@@ -116,3 +116,5 @@ A comprehensive backend dashboard for administrators:
 - **Micro-Interactions (UX Upgrade)**:
     - **Toast Notifications**: Replaced jarring system alerts with elegant `react-hot-toast` popups. Optimized `z-index` (999999) to ensure visibility over LINE's in-app browser UI.
     - **Skeleton Loading**: Implemented "Shimmer" skeletons during data fetching, reducing perceived wait time compared to traditional spinners.
+- **Safety**:
+    - **Custom Confirmation Modal**: Replaced native `window.confirm` with a custom-designed Modal to prevent "auto-confirmation" issues in LINE/FB browsers and providing a clear, safe "Think Again" option.
