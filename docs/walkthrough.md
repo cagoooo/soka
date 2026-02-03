@@ -71,7 +71,7 @@ A comprehensive backend dashboard for administrators:
     - Interactive hover states.
     - Optimized RWD layout for mobile devices.
 
-## 🛠️ v1.0.1 Updates (Latest)
+## 🛠️ v1.0.1 Updates
 - **Reset All Functionality**:
     - **Server-Side**: Added timestamp tracking to system config upon reset.
     - **Client-Side**: Auto-detection of system reset clears local storage permit logic, allowing devices to re-register immediately.
@@ -81,3 +81,8 @@ A comprehensive backend dashboard for administrators:
     - **New Fields**: Added `Email` field collection and export support.
 - **UI Optimizations**:
     - **Admin Charts**: Refactored to Flexbox layout to fix label truncation and improved mobile responsiveness.
+
+## 🛠️ v1.0.2 Updates (Latest)
+- **Session Data Updates**:
+    - **3F (A/B)**: Updated to combined "Positive Parenting / Professional Course" booths. Capacity adjusted to **160**.
+    - **6F_C & 6F_D**: Capacity increased from 60 to **70**.
