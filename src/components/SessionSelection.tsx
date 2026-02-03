@@ -188,32 +188,34 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                     layoutId={slot.id}
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{
-                                        opacity: isDimmed || disabled ? 0.4 : 1, // Lower opacity if disabled
+                                        opacity: disabled && !isSelected ? 0.4 : 1, // Only dim if disabled AND NOT selected
                                         scale: isSelected ? 1.02 : 1,
-                                        filter: isFull ? 'grayscale(100%)' : (disabled ? 'grayscale(50%)' : 'none'), // Move disabled filter here
+                                        filter: isFull && !isSelected ? 'grayscale(100%)' : (disabled && !isSelected ? 'grayscale(100%)' : 'none'), // Only grayscale if full OR (disabled AND NOT selected)
                                     }}
                                     whileHover={(!isFull && !isDimmed && !disabled) ? { y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.1)' } : {}}
-                                    whileTap={(!isFull && !isDimmed && !disabled) ? { scale: 0.98 } : {}} // Prevent tap scale
+                                    whileTap={(!isFull && !isDimmed && !disabled) ? { scale: 0.98 } : {}}
                                     onClick={() => !isFull && !disabled && handleSlotClick(slot.id, slot.type)}
                                     className={`slot-card type-${slot.type} ${isSelected ? 'selected' : ''} ${isFull ? 'full' : ''}`}
                                     style={disabled ? {
-                                        cursor: 'default', // Changed from not-allowed to default for cleaner feel
-                                        pointerEvents: 'none', // Effectively disable all mouse events
-                                        border: '1px solid transparent', // Remove outline
-                                        background: '#f1f5f9' // Flat background
+                                        cursor: 'default',
+                                        pointerEvents: 'none',
+                                        // If selected, keep the card looking "rich" but static
+                                        // If NOT selected, flatten it
+                                        border: isSelected ? undefined : '1px solid transparent',
+                                        background: isSelected ? undefined : '#f1f5f9',
+                                        boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.1)' : 'none', // Add distinct static shadow for booked item
+                                        transform: isSelected ? 'scale(1.02)' : 'none' // Ensure scale persists statically? (animate handles this but style helps)
                                     } : {}}
                                 >
-                                    {isSelected && !disabled && (
+                                    {isSelected && ( // Consolidated checkmark
                                         <motion.div
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
                                             className="check-mark"
+                                            style={{ background: disabled ? '#10b981' : undefined }} // Ensure strong green in booked state
                                         >
                                             ✓
                                         </motion.div>
-                                    )}
-                                    {isSelected && disabled && ( // Static checkmark for booked view
-                                        <div className="check-mark">✓</div>
                                     )}
 
                                     {/* Sold Out Overlay */}
