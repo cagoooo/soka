@@ -65,7 +65,7 @@ export const AdminDashboard = () => {
                 dateStr = String(b.timestamp);
             }
             return {
-                'BOOKING ID': b.id,
+                'ID': b.id ? b.id.substring(0, 8).toUpperCase() : '',
                 姓名: b.name,
                 報名時間: dateStr,
                 選課ID: b.slots.join(', '),
