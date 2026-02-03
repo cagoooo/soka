@@ -121,3 +121,4 @@ A comprehensive backend dashboard for administrators:
 - **Navigation**:
     - **Back to Home**: Changed "Temporarily Close" to "Back to Home" on the ticket view. This now correctly toggles the view instead of reloading the page, allowing users to return to the landing page.
     - **View My Ticket**: Added a dedicated button on the landing page for users with existing tickets to easily access their Digital Ticket.
+    - **Lock Selection**: Automatically disables the session selection grid for users who have already booked, preventing accidental re-selection (visual feedback: grayscale + no-drop cursor).

@@ -193,7 +193,7 @@ const MainContent = () => {
           (A+B 為一組，C 與 D 為獨立項目)
         </p>
 
-        <SessionSelection />
+        <SessionSelection disabled={!!ticketData} />
 
         <div style={{ textAlign: 'center', marginTop: '30px' }}>
           {ticketData ? (

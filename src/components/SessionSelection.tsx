@@ -7,7 +7,12 @@ import { ConflictModal } from './ConflictModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SessionCardSkeleton } from './skeletons/SessionCardSkeleton';
 
-export const SessionSelection = () => {
+// Define props interface
+interface SessionSelectionProps {
+    disabled?: boolean;
+}
+
+export const SessionSelection = ({ disabled = false }: SessionSelectionProps) => {
     const { slots, loading } = useSlots();
     const { selection, selectSession, isAdmin } = useBooking();
 
@@ -16,7 +21,10 @@ export const SessionSelection = () => {
 
     // Smart UX: Check for group conflicts
     const handleSlotClick = (id: string, type: SessionType) => {
+        if (disabled) return; // Prevent interaction if disabled
+
         const hasAorB = !!selection.selectedA || !!selection.selectedB;
+        // ... (rest of logic)
         const hasC = !!selection.selectedC;
         const hasD = !!selection.selectedD;
 
@@ -185,9 +193,10 @@ export const SessionSelection = () => {
                                         scale: isSelected ? 1.02 : 1,
                                         filter: isFull ? 'grayscale(100%)' : 'none'
                                     }}
-                                    whileHover={(!isFull && !isDimmed) ? { y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.1)' } : {}}
-                                    onClick={() => !isFull && handleSlotClick(slot.id, slot.type)}
+                                    whileHover={(!isFull && !isDimmed && !disabled) ? { y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.1)' } : {}}
+                                    onClick={() => !isFull && !disabled && handleSlotClick(slot.id, slot.type)}
                                     className={`slot-card type-${slot.type} ${isSelected ? 'selected' : ''} ${isFull ? 'full' : ''}`}
+                                    style={disabled ? { cursor: 'not-allowed', opacity: 0.7, filter: 'grayscale(50%)' } : {}}
                                 >
                                     {isSelected && (
                                         <motion.div
