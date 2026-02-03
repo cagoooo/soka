@@ -65,10 +65,12 @@ export const AdminDashboard = () => {
                 dateStr = String(b.timestamp);
             }
             return {
+                'BOOKING ID': b.id,
                 姓名: b.name,
                 報名時間: dateStr,
                 選課ID: b.slots.join(', '),
-                狀態: '已報名'
+                狀態: '已報名',
+                簽到: ''  // Empty column for manual check-in
             };
         };
 
