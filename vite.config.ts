@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite'
+/// <reference types="vitest" />
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -8,11 +9,26 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // ... (start of existing PWA config) ...
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'vite.svg', 'SOKA.jpg'],
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'pages-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 // 1 day
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
@@ -59,4 +75,9 @@ export default defineConfig({
       }
     })
   ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.ts',
+  },
 })

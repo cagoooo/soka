@@ -285,6 +285,19 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                     whileTap={(!isFull && !isVisuallyDimmed && !disabled) ? { scale: 0.98 } : {}}
                                     // onClick: Allow click if group-dimmed (triggers modal), but BLOCK if strictly disabled
                                     onClick={() => !isFull && !disabled && !isStrictlyDisabled && handleSlotClick(slot.id, slot.type)}
+
+                                    // Accessibility Attributes
+                                    role="button"
+                                    aria-disabled={disabled || isStrictlyDisabled || isFull}
+                                    aria-label={`${slot.title}, 地點: ${slot.location}, 剩餘名額: ${remaining}`}
+                                    tabIndex={disabled || isStrictlyDisabled || isFull ? -1 : 0}
+                                    onKeyDown={(e) => {
+                                        if ((e.key === 'Enter' || e.key === ' ') && !isFull && !disabled && !isStrictlyDisabled) {
+                                            e.preventDefault();
+                                            handleSlotClick(slot.id, slot.type);
+                                        }
+                                    }}
+
                                     className={`slot-card type-${slot.type} ${isSelected ? 'selected' : ''} ${isFull ? 'full' : ''}`}
                                     style={(disabled || isStrictlyDisabled) ? { // Apply "disabled" styles only if truly strictly disabled (or prop disabled)
                                         cursor: 'default',

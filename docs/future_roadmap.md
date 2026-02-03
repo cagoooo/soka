@@ -2,7 +2,14 @@
 
 ## ✅ Completed Milestones (已完成里程碑)
 
-### **v1.0.8 - Admin Supercharge (後台進化)** (Current)
+### **v1.0.9 - Administrative Precision (行政優化)** (Current)
+- 🖨️ **Smart PDF Export**：
+    - **Native A4 Layout**：針對瀏覽器原生列印功能優化，去除多餘 UI，只保留核心表格。
+    - **Header Mapping**：將系統代號 (2F_A) 自動轉換為完整活動名稱 (如「躍動潛能...」)，清晰易讀。
+    - **Signature Space**：每列高度強制設定為 50px，提供充足的手寫簽名空間。
+    - **Page Break Logic**：智慧分頁，確保每個場次的簽到表獨立一頁，方便分發給不同負責人。
+
+### **v1.0.8 - Admin Supercharge (後台進化)**
 - 📊 **Admin Dashboard Plus**：
     - **Live Monitor**：導入 Firestore `onSnapshot`，實現儀表板「秒級」自動更新，搭配紅點動畫 (Live Badge) 掌握即時戰況。
     - **Excel Export**：一鍵匯出完整報名名單 (.xlsx)，自動格式化欄位 (姓名、場次、時間)，優化行政作業流程。
@@ -36,30 +43,53 @@
 
 ---
 
-## 📅 Phase 3: Smart Campus & Interaction (Next Steps)
+## 📅 Phase 3: Smart Campus & Interaction (Next Steps Ideas)
+
+以下是建議可以繼續開發的優化方向，您可以依據需求挑選優先順序：
 
 ### 1. 📱 QR Check-in System (現場快速通關)
-**目標**：解決活動當天 500+ 人次的簽到擁塞問題。
+**目標**：解決活動當天 500+ 人次的簽到擁塞問題，只需一台手機即可運作。
 - **Admin Scanner (掃碼槍)**：
-    - 利用手機鏡頭直接辨識學生票券 QRCode。
-    - **離線簽到**：支援斷網環境先暫存，連線後自動同步回資料庫。
-    - **防重複入場**：掃描後自動標記 "Checked-in"，重複掃描顯示警告。
+    - 在 Admin Dashboard 新增「掃描模式」，利用手機鏡頭直接辨識學生票券 QRCode。
+    - **即時回饋**：掃描成功發出「嗶」聲並顯示綠色勾勾，重複掃描顯示紅色警告。
+    - **離線簽到能力**：為了應對活動現場網路擁塞，支援將簽到數據暫存在 LocalStorage，連線恢復後自動同步上傳。
+    - **儀表板連動**：Admin Dashboard 新增「實到人數」欄位，與報名人數對比，計算出席率。
 
-### 2. 🤖 AI Data Insight (AI 數據分析助手)
-**目標**：利用收集到的數據提供決策建議。
-- **自然語言查詢**：讓管理者能用問的：「目前哪个系級報名最踴躍？」、「C 場次還剩多少位子？」。
-- **趨勢預測**：根據前 24 小時報名速率，預測何時會額滿，提早發布社群告急貼文。
+### 2. 📩 Automated Notification (自動化通知)
+**目標**：降低活動當天 No-show (缺席) 率，提升活動參與度。
+- **Email/Calendar Integration**：
+    - 雖然目前不收集 email，但若未來需要，可串接 **Firebase Extensions (Trigger Email)**。
+    - 當學生報名成功，自動寄送一封包含 `.ics` 行事曆檔案的信件，讓學生一鍵加入 Google Calendar。
+- **Line Notify (進階)**：
+    - 可研究串接 LINE Notify API，讓學生訂閱通知，活動前 30 分鐘自動推播提醒。
 
-### 3. 🎮 Gamification (展場互動遊戲化)
-**目標**：不只是報名，更增加展場停留時間。
-- **數位集章**：學生到實體攤位掃描 QR Code 集點，集滿 5 點自動在「我的票券」頁面解鎖「兌換券」。
-- **幸運碼系統**：報名成功後獲得一組 Unique ID，活動當天大螢幕即時抽獎。
+### 3. 🤖 AI Data Insight (AI 數據分析助手)
+**目標**：利用收集到的數據提供決策建議，讓數據說話。
+- **自然語言查詢 (Gemini API Integration)**：
+    - 讓管理者能用問的：「目前哪个系級報名最踴躍？」、「C 場次還剩多少位子？」。
+    - 將 Firestore 數據轉為 JSON 丟給 LLM 進行分析 (需注意隱私去識別化)。
+- **熱力圖分析**：
+    - 分析 2F/3F/5F/6F 各時段的報名速率，找出「秒殺場次」與「冷門場次」，作為明年活動規劃參考。
 
-### 4. 🏗️ Engineering Excellence (工程體質優化)
-- **Lazy Retry Component**：針對網路不穩定的校園環境，強化 Lazy Load 的自動重試機制 (已初步實作，可模組化)。
-- **Unit Testing**：針對 `SessionSelection` 和 `bookingService` 撰寫單元測試，確保搶票邏輯 (A+B 互斥、名額扣除) 100% 正確。
-- **Accessibility (a11y)**：為鎖定狀態的卡片加入 `aria-disabled` 標籤，提升無障礙體驗。
+### 4. 🎮 Gamification (展場互動遊戲化)
+**目標**：不只是報名，更增加展場停留時間，讓 APP 成為活動當天的導覽員。
+- **數位集章 (Digital Stamp Rally)**：
+    - 學生到實體攤位 (2F, 3F, 5F) 尋找隱藏的 QR Code。
+    - 掃描後，APP 內的「集章卡」會蓋上數位印章。
+    - 集滿 5 點自動在「我的票券」頁面解鎖「兌換券」，可至櫃台換取小禮物。
+- **幸運碼系統**：
+    - 報名成功後獲得一組 Unique ID (如 `#A188`)。
+    - 活動閉幕時，在大螢幕上進行數位抽獎，增加留存率。
+
+### 5. 🏗️ Engineering Excellence (工程體質優化)
+- **PWA Offline Mode (離線瀏覽)**：
+    - 強化 Service Worker 快取策略，讓學生即使在電梯裡、地下室沒訊號，也能順利打開 APP 展示票券。
+- **Unit Testing**：
+    - 針對 `SessionSelection` 和 `bookingService` 撰寫單元測試，確保搶票邏輯 (A+B 互斥、名額扣除) 100% 正確，避免改 A 壞 B。
+- **Accessibility (a11y)**：
+    - 為鎖定狀態的卡片加入 `aria-disabled` 標籤，提升無障礙體驗，符合校園網站標準。
 
 ### 📌 建議優先順序
-1.  **QR Check-in** (活動現場絕對必要)
-2.  **Unit Testing** (確保系統長治久安)
+1.  **QR Check-in** (活動現場絕對必要，效益最高)
+2.  **PWA Offline Mode** (確保活動當天體驗流暢)
+3.  **Gamification** (若行有餘力，可增加活動趣味性)
