@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useBooking } from '../contexts/BookingContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { addAdminLog } from '../services/adminLogService';
 
 interface Props {
     isOpen: boolean;
@@ -12,14 +13,16 @@ export const AdminLoginModal = ({ isOpen, onClose }: Props) => {
     const { login } = useBooking();
     const [error, setError] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (login(password)) {
+            await addAdminLog('LOGIN', 'SUCCESS', '管理員登入成功');
             onClose();
             setPassword('');
             setError(false);
         } else {
             setError(true);
+            await addAdminLog('LOGIN', 'FAILURE', '密碼驗證失敗');
             setTimeout(() => setError(false), 2000);
         }
     };

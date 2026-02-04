@@ -4,11 +4,14 @@ import { SeedButton } from './SeedButton';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import * as XLSX from 'xlsx';
 import { format } from 'date-fns';
+import { addAdminLog } from '../services/adminLogService';
+import { SecurityDashboard } from './SecurityDashboard';
 
 export const AdminDashboard = () => {
     const [bookings, setBookings] = useState<BookingRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [isChartReady, setIsChartReady] = useState(false);
+    const [activeTab, setActiveTab] = useState<'stats' | 'security'>('stats');
 
     // Initial load + Real-time subscription
     useEffect(() => {
@@ -17,7 +20,10 @@ export const AdminDashboard = () => {
             setLoading(false);
 
             // Wait for container stabilization
-            setTimeout(() => setIsChartReady(true), 150);
+            setTimeout(() => {
+                setIsChartReady(true);
+                addAdminLog('VIEW_DASHBOARD', 'SUCCESS', `載入儀表板，目前報名總數: ${data.length}`);
+            }, 150);
         });
 
         // Cleanup subscription on unmount
@@ -111,7 +117,13 @@ export const AdminDashboard = () => {
         });
 
         // Write file
-        XLSX.writeFile(wb, `Soka_Expo_Bookings_${format(new Date(), 'yyyyMMdd_HHmm')}.xlsx`);
+        try {
+            XLSX.writeFile(wb, `Soka_Expo_Bookings_${format(new Date(), 'yyyyMMdd_HHmm')}.xlsx`);
+            addAdminLog('EXPORT_EXCEL', 'SUCCESS', `匯出 Excel 報表，共 ${bookings.length} 筆資料`);
+        } catch (error) {
+            console.error("Export failed:", error);
+            addAdminLog('EXPORT_EXCEL', 'FAILURE', '匯出 Excel 報表失敗');
+        }
     };
 
     // 3. PDF / Print Export Logic (Native Browser Print for A4)
@@ -273,75 +285,103 @@ export const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* Stats Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px', marginBottom: '30px' }}>
-                <div className="glass-card" style={{ padding: '20px', textAlign: 'center', margin: 0 }}>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#6366f1' }}>{bookings.length}</div>
-                    <div style={{ color: '#64748b' }}>總報名人數</div>
-                </div>
-                <div className="glass-card" style={{ padding: '20px', textAlign: 'center', margin: 0 }}>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#f59e0b' }}>
-                        {Object.values(slotCounts).reduce((a, b) => a + b, 0)}
-                    </div>
-                    <div style={{ color: '#64748b' }}>總選課人次</div>
-                </div>
+            {/* Tab Navigation */}
+            <div style={{ display: 'flex', gap: '15px', marginBottom: '25px', padding: '5px' }}>
+                <button
+                    onClick={() => setActiveTab('stats')}
+                    className={activeTab === 'stats' ? 'btn-primary' : 'btn-secondary'}
+                    style={{ flex: 1, padding: '12px', opacity: activeTab === 'stats' ? 1 : 0.7 }}
+                >
+                    📊 報名數據統計
+                </button>
+                <button
+                    onClick={() => setActiveTab('security')}
+                    className={activeTab === 'security' ? 'btn-primary' : 'btn-secondary'}
+                    style={{ flex: 1, padding: '12px', opacity: activeTab === 'security' ? 1 : 0.7 }}
+                >
+                    🛡️ 安全審查日誌
+                </button>
             </div>
 
-            {/* Chart */}
-            <div className="glass-card" style={{ padding: '24px', marginBottom: '30px', height: '450px', minHeight: '450px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-                <h3 style={{ marginBottom: '20px', fontSize: '1.25rem', color: '#475569', flexShrink: 0 }}>📊 場次熱門度統計</h3>
-                <div style={{ flex: 1, width: '100%', minHeight: '300px', minWidth: 0, position: 'relative' }}>
-                    {isChartReady ? (
-                        <ResponsiveContainer width="100%" height="100%" debounce={100}>
-                            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-                                <XAxis
-                                    dataKey="name"
-                                    tick={{ fill: '#64748b', fontSize: 12 }}
-                                    tickLine={false}
-                                    axisLine={{ stroke: '#cbd5e1' }}
-                                    dy={10}
-                                />
-                                <YAxis
-                                    allowDecimals={false}
-                                    tick={{ fill: '#64748b', fontSize: 12 }}
-                                    tickLine={false}
-                                    axisLine={false}
-                                />
-                                <Tooltip
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', background: 'rgba(255, 255, 255, 0.95)' }}
-                                    cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }}
-                                />
-                                <Bar dataKey="count" radius={[6, 6, 0, 0]} barSize={40}>
-                                    {chartData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.name.includes('A') ? '#818cf8' : entry.name.includes('B') ? '#fb923c' : '#34d399'} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
-                            載入圖表中...
+            {loading && <div style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>載入資料中...</div>}
+
+            {!loading && activeTab === 'stats' && (
+                <div style={{ animation: 'fadeIn 0.4s ease-out' }}>
+                    {/* Stats Cards */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px', marginBottom: '30px' }}>
+                        <div className="glass-card" style={{ padding: '20px', textAlign: 'center', margin: 0 }}>
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#6366f1' }}>{bookings.length}</div>
+                            <div style={{ color: '#64748b' }}>總報名人數</div>
                         </div>
-                    )}
-                </div>
-            </div>
-
-            {/* System Tools */}
-            <div style={{ borderTop: '1px dashed #cbd5e1', paddingTop: '20px', marginTop: '40px' }}>
-                <h3 style={{ fontSize: '1.2rem', color: '#475569', marginBottom: '15px' }}>🛠️ 系統工具 (System Tools)</h3>
-                <div className="system-tools-card">
-                    <div style={{ flex: 1 }}>
-                        <h4 style={{ margin: '0 0 5px 0', color: '#ef4444' }}>⚠️ 資料庫重置</h4>
-                        <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
-                            此操作將會清空所有場次與報名資料，請謹慎使用。
-                        </p>
+                        <div className="glass-card" style={{ padding: '20px', textAlign: 'center', margin: 0 }}>
+                            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#f59e0b' }}>
+                                {Object.values(slotCounts).reduce((a, b) => a + b, 0)}
+                            </div>
+                            <div style={{ color: '#64748b' }}>總選課人次</div>
+                        </div>
                     </div>
-                    <div>
-                        <SeedButton />
-                    </div>
-                </div>
-            </div>
 
+                    {/* Chart */}
+                    <div className="glass-card" style={{ padding: '24px', marginBottom: '30px', height: '450px', minHeight: '450px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+                        <h3 style={{ marginBottom: '20px', fontSize: '1.25rem', color: '#475569', flexShrink: 0 }}>📊 場次熱門度統計</h3>
+                        <div style={{ flex: 1, width: '100%', minHeight: '300px', minWidth: 0, position: 'relative' }}>
+                            {isChartReady ? (
+                                <ResponsiveContainer width="100%" height="100%" debounce={100}>
+                                    <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
+                                        <XAxis
+                                            dataKey="name"
+                                            tick={{ fill: '#64748b', fontSize: 12 }}
+                                            tickLine={false}
+                                            axisLine={{ stroke: '#cbd5e1' }}
+                                            dy={10}
+                                        />
+                                        <YAxis
+                                            allowDecimals={false}
+                                            tick={{ fill: '#64748b', fontSize: 12 }}
+                                            tickLine={false}
+                                            axisLine={false}
+                                        />
+                                        <Tooltip
+                                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', background: 'rgba(255, 255, 255, 0.95)' }}
+                                            cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }}
+                                        />
+                                        <Bar dataKey="count" radius={[6, 6, 0, 0]} barSize={40}>
+                                            {chartData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.name.includes('A') ? '#818cf8' : entry.name.includes('B') ? '#fb923c' : '#34d399'} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
+                                    載入圖表中...
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* System Tools */}
+                    <div style={{ borderTop: '1px dashed #cbd5e1', paddingTop: '20px', marginTop: '40px' }}>
+                        <h3 style={{ fontSize: '1.2rem', color: '#475569', marginBottom: '15px' }}>🛠️ 系統工具 (System Tools)</h3>
+                        <div className="system-tools-card">
+                            <div style={{ flex: 1 }}>
+                                <h4 style={{ margin: '0 0 5px 0', color: '#ef4444' }}>⚠️ 資料庫重置</h4>
+                                <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
+                                    此操作將會清空所有場次與報名資料，請謹慎使用。
+                                </p>
+                            </div>
+                            <div>
+                                <SeedButton />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            )}
+
+            {!loading && activeTab === 'security' && (
+                <SecurityDashboard />
+            )}
         </div>
     );
 };

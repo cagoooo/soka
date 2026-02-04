@@ -1,5 +1,6 @@
 import { writeBatch, doc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
+import { addAdminLog } from '../services/adminLogService';
 
 export const SeedButton = () => {
     const handleSeed = async () => {
@@ -60,6 +61,7 @@ export const SeedButton = () => {
             });
 
             await batch.commit();
+            await addAdminLog('SEED_DATA', 'SUCCESS', '成功重置全系統訂票資料與場次設置');
             alert('系統已重置！所有報名資料已清除，場次已恢復初始狀態。');
 
             // Reload to refresh the dashboard
