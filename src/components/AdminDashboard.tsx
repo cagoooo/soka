@@ -8,12 +8,16 @@ import { format } from 'date-fns';
 export const AdminDashboard = () => {
     const [bookings, setBookings] = useState<BookingRecord[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isChartReady, setIsChartReady] = useState(false);
 
     // Initial load + Real-time subscription
     useEffect(() => {
         const unsubscribe = subscribeToBookings((data) => {
             setBookings(data);
             setLoading(false);
+
+            // Wait for container stabilization
+            setTimeout(() => setIsChartReady(true), 150);
         });
 
         // Cleanup subscription on unmount
