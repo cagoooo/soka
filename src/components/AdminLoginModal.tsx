@@ -50,6 +50,7 @@ export const AdminLoginModal = ({ isOpen, onClose }: Props) => {
                         <form onSubmit={handleSubmit}>
                             <input
                                 type="password"
+                                autoComplete="current-password"
                                 autoFocus
                                 placeholder="請輸入管理密碼..."
                                 value={password}

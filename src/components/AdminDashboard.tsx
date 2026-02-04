@@ -284,9 +284,9 @@ export const AdminDashboard = () => {
             </div>
 
             {/* Chart */}
-            <div className="glass-card" style={{ padding: '24px', marginBottom: '30px', height: '450px', display: 'flex', flexDirection: 'column' }}>
+            <div className="glass-card" style={{ padding: '24px', marginBottom: '30px', height: '450px', minHeight: '450px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
                 <h3 style={{ marginBottom: '20px', fontSize: '1.25rem', color: '#475569', flexShrink: 0 }}>📊 場次熱門度統計</h3>
-                <div style={{ flex: 1, width: '100%', minHeight: 0 }}>
+                <div style={{ flex: 1, width: '100%', minHeight: '300px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                             <XAxis

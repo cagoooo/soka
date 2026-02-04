@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { signInAnonymously, onAuthStateChanged, type User } from 'firebase/auth';
 import { auth } from '../firebase';
 
+import { LoadingScreen } from './LoadingScreen';
+
 export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
@@ -19,7 +21,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
         return () => unsubscribe();
     }, []);
 
-    if (loading) return <div className="loading">Loading...</div>;
+    if (loading) return <LoadingScreen />;
 
     if (!user) return <div className="error">Authenticating...</div>;
 

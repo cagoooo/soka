@@ -18,26 +18,7 @@ import { lazyRetry } from './utils/lazyImport';
 const AdminDashboard = lazyRetry(() => import('./components/AdminDashboard').then(module => ({ default: module.AdminDashboard })), 'AdminDashboard');
 const TicketView = lazyRetry(() => import('./components/TicketView').then(module => ({ default: module.TicketView })), 'TicketView');
 
-// Loading Component
-const Loading = () => (
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', flexDirection: 'column', gap: '15px' }}>
-    <div className="spinner" style={{
-      width: '40px',
-      height: '40px',
-      border: '4px solid #f3f3f3',
-      borderTop: '4px solid #3498db',
-      borderRadius: '50%',
-      animation: 'spin 1s linear infinite'
-    }} />
-    <span style={{ color: '#64748b' }}>Loading...</span>
-    <style>{`
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `}</style>
-  </div>
-);
+import { LoadingScreen } from './components/LoadingScreen';
 
 interface TicketData {
   bookingId: string;
@@ -175,7 +156,7 @@ const MainContent = () => {
   if (viewingTicket && ticketData) {
     return (
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<LoadingScreen />}>
           <TicketView
             bookingId={ticketData.bookingId}
             userDetails={ticketData.userDetails}
@@ -262,7 +243,7 @@ const MainContent = () => {
           border: '1px solid rgba(255,255,255,0.5)',
           boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)'
         }}>
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<LoadingScreen />}>
             <AdminDashboard />
           </Suspense>
         </div>
