@@ -48,6 +48,15 @@ export const AdminLoginModal = ({ isOpen, onClose }: Props) => {
                     >
                         <h3 style={{ textAlign: 'center', marginBottom: '20px', color: '#1e293b' }}>🔐 管理員登入</h3>
                         <form onSubmit={handleSubmit}>
+                            {/* Hidden username field for accessibility/password managers */}
+                            <input
+                                type="text"
+                                name="username"
+                                autoComplete="username"
+                                style={{ display: 'none' }}
+                                readOnly
+                                value="admin"
+                            />
                             <input
                                 type="password"
                                 autoComplete="current-password"
