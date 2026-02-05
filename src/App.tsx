@@ -10,7 +10,9 @@ import { SessionSelection } from './components/SessionSelection';
 import { RegistrationForm } from './components/RegistrationForm';
 import { AdminLoginModal } from './components/AdminLoginModal';
 import { ConfirmBookingModal } from './components/ConfirmBookingModal';
+import { RegistrationStatusScreen } from './components/RegistrationStatusScreen';
 import { submitBooking, type UserDetails } from './services/bookingService';
+import { useRegistrationStatus } from './hooks/useRegistrationStatus';
 import './index.css';
 
 // Lazy load heavy components with retry logic for 404 chunk errors
@@ -39,6 +41,31 @@ const MainContent = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingUserDetails, setPendingUserDetails] = useState<UserDetails | null>(null);
   const [viewingTicket, setViewingTicket] = useState(false);
+
+  // Registration Time Limit Hook
+  const registrationStatus = useRegistrationStatus();
+
+  // 隱藏式管理員登入：點擊標題 5 次觸發
+  const [adminTapCount, setAdminTapCount] = useState(0);
+  const [adminLastTapTime, setAdminLastTapTime] = useState(0);
+
+  const handleTitleTap = () => {
+    const now = Date.now();
+    // 如果距離上次點擊超過 2 秒，重置計數
+    if (now - adminLastTapTime > 2000) {
+      setAdminTapCount(1);
+    } else {
+      const newCount = adminTapCount + 1;
+      setAdminTapCount(newCount);
+
+      // 達到 5 次點擊，開啟登入視窗
+      if (newCount >= 5) {
+        setShowAdminLogin(true);
+        setAdminTapCount(0);
+      }
+    }
+    setAdminLastTapTime(now);
+  };
 
   // Device Restriction: Check for existing ticket on mount AND check for system reset
   useEffect(() => {
@@ -168,10 +195,34 @@ const MainContent = () => {
     );
   }
 
+  // Registration Time Limit Check (Admin bypasses this)
+  // Show loading while checking registration status
+  if (registrationStatus.status === 'loading') {
+    return <LoadingScreen />;
+  }
+
+  // If not admin and registration is not open, show status screen
+  if (!isAdmin && registrationStatus.status !== 'open') {
+    return (
+      <RegistrationStatusScreen
+        status={registrationStatus.status as 'before' | 'closed'}
+        countdown={registrationStatus.countdown}
+        openTime={registrationStatus.openTime}
+        closeTime={registrationStatus.closeTime}
+      />
+    );
+  }
+
   return (
     <div className="container">
       <div className="glass-card">
-        <h1>2026 創價・教育 EXPO</h1>
+        {/* 點擊標題 5 次可開啟隱藏的管理員登入 */}
+        <h1
+          onClick={handleTitleTap}
+          style={{ cursor: 'default', userSelect: 'none' }}
+        >
+          2026 創價・教育 EXPO
+        </h1>
         <h2>教育實踐趴 - 線上選課</h2>
         <p className="description" style={{ textAlign: 'center', color: '#64748b', marginBottom: '30px' }}>
           請選擇適合您的場次。<br />
@@ -216,13 +267,15 @@ const MainContent = () => {
         </div>
       </div>
 
-      {showForm && (
-        <RegistrationForm
-          onSubmit={handleRegistrationSubmit}
-          onCancel={() => setShowForm(false)}
-          loading={submitting}
-        />
-      )}
+      {
+        showForm && (
+          <RegistrationForm
+            onSubmit={handleRegistrationSubmit}
+            onCancel={() => setShowForm(false)}
+            loading={submitting}
+          />
+        )
+      }
 
       {/* Confirmation Modal */}
       <ConfirmBookingModal
@@ -233,31 +286,26 @@ const MainContent = () => {
       />
 
       {/* Admin Section */}
-      {isAdmin && (
-        <div style={{
-          padding: '30px',
-          background: 'rgba(255,255,255,0.85)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '24px',
-          marginTop: '40px',
-          border: '1px solid rgba(255,255,255,0.5)',
-          boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)'
-        }}>
-          <Suspense fallback={<LoadingScreen />}>
-            <AdminDashboard />
-          </Suspense>
-        </div>
-      )}
+      {
+        isAdmin && (
+          <div style={{
+            padding: '30px',
+            background: 'rgba(255,255,255,0.85)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '24px',
+            marginTop: '40px',
+            border: '1px solid rgba(255,255,255,0.5)',
+            boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)'
+          }}>
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminDashboard />
+            </Suspense>
+          </div>
+        )
+      }
 
       <footer style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8', fontSize: '0.9rem' }}>
         © 2026 Soka Education EXPO. All rights reserved.
-        <br />
-        <span
-          onClick={() => setShowAdminLogin(true)}
-          style={{ cursor: 'pointer', opacity: 0.3, marginTop: '10px', display: 'inline-block' }}
-        >
-          Admin Access
-        </span>
         <br />
         <a
           href="https://cagoooo.github.io/Akai/"
@@ -270,7 +318,7 @@ const MainContent = () => {
       </footer>
 
       <AdminLoginModal isOpen={showAdminLogin} onClose={() => setShowAdminLogin(false)} />
-    </div>
+    </div >
   );
 };
 

@@ -6,6 +6,7 @@ import * as XLSX from 'xlsx';
 import { format } from 'date-fns';
 import { addAdminLog } from '../services/adminLogService';
 import { SecurityDashboard } from './SecurityDashboard';
+import { RegistrationControl } from './RegistrationControl';
 
 export const AdminDashboard = () => {
     const [bookings, setBookings] = useState<BookingRecord[]>([]);
@@ -307,6 +308,9 @@ export const AdminDashboard = () => {
 
             {!loading && activeTab === 'stats' && (
                 <div style={{ animation: 'fadeIn 0.4s ease-out' }}>
+                    {/* Registration Time Control */}
+                    <RegistrationControl />
+
                     {/* Stats Cards */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px', marginBottom: '30px' }}>
                         <div className="glass-card" style={{ padding: '20px', textAlign: 'center', margin: 0 }}>

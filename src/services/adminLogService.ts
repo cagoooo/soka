@@ -1,7 +1,7 @@
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs, Timestamp } from 'firebase/firestore';
 
-export type AdminAction = 'LOGIN' | 'LOGIN_FAILURE' | 'SEED_DATA' | 'EXPORT_EXCEL' | 'VIEW_DASHBOARD';
+export type AdminAction = 'LOGIN' | 'LOGIN_FAILURE' | 'SEED_DATA' | 'EXPORT_EXCEL' | 'VIEW_DASHBOARD' | 'REGISTRATION_CONTROL';
 
 export interface AdminLog {
     id?: string;
