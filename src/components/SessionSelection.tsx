@@ -263,7 +263,7 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                 statusIcon = '❌';
                             } else if (remaining <= 20) {
                                 statusColor = '#ef4444'; // Red
-                                statusText = '數量有限';
+                                statusText = '名額有限';
                                 statusIcon = '🔥';
                             } else if (percent >= 70) {
                                 statusColor = '#f59e0b'; // Orange
