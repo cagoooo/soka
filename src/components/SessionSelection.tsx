@@ -263,7 +263,7 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                 statusIcon = '❌';
                             } else if (remaining <= 20) {
                                 statusColor = '#ef4444'; // Red
-                                statusText = '最後搶購';
+                                statusText = '名額緊張';
                                 statusIcon = '🔥';
                             } else if (percent >= 70) {
                                 statusColor = '#f59e0b'; // Orange
@@ -319,10 +319,10 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                         </motion.div>
                                     )}
 
-                                    {/* Sold Out Overlay - 醒目版 */}
+                                    {/* 已額滿 - 醒目版 */}
                                     {isFull && (
                                         <div className="sold-out-overlay-text">
-                                            SOLD OUT
+                                            FULL
                                             <span className="sold-out-cn">已額滿</span>
                                         </div>
                                     )}

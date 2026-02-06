@@ -228,7 +228,7 @@ h3 {
   z-index: 1;
 }
 
-/* 已額滿 Sold Out 覆蓋層 - 超級醒目版 */
+/* 已額滿覆蓋層 - 超級醒目版 */
 .slot-card .sold-out-overlay-text {
   position: absolute !important;
   top: 50% !important;
