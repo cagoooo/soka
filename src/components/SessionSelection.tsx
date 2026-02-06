@@ -319,10 +319,11 @@ export const SessionSelection = ({ disabled = false, bookedSlotIds }: SessionSel
                                         </motion.div>
                                     )}
 
-                                    {/* Sold Out Overlay */}
+                                    {/* Sold Out Overlay - 醒目版 */}
                                     {isFull && (
                                         <div className="sold-out-overlay-text">
                                             SOLD OUT
+                                            <span className="sold-out-cn">已額滿</span>
                                         </div>
                                     )}
 

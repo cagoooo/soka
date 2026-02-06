@@ -124,3 +124,11 @@ A comprehensive backend dashboard for administrators:
     - **Back to Home**: Changed "Temporarily Close" to "Back to Home" on the ticket view. This now correctly toggles the view instead of reloading the page, allowing users to return to the landing page.
     - **View My Ticket**: Added a dedicated button on the landing page for users with existing tickets. Now includes a status indicator "🎉 Registration Completed" and enhanced RWD styling for better visibility on mobile.
     - **Lock Selection**: Automatically disables the session selection grid for booked users. Removed interactive visual cues (hover effects, shadows, cursor pointer) to make the state clearly "locked" and non-interactive, preventing confusion.
+
+## 🛠️ v1.0.15 Updates (Latest)
+- **已額滿課程卡片 UI 大幅優化**：
+    - **醒目覆蓋層**：為已額滿的課程卡片添加置中的「SOLD OUT / 已額滿」雙語標籤，採用紅色漸層背景與實線邊框。
+    - **脈動動畫**：添加 `soldOutPulse` CSS 動畫效果，讓覆蓋層輕微放大縮小並閃爍陰影，吸引使用者注意。
+    - **視覺區隔**：卡片邊框改為 3px 實線紅色 (`#dc2626`) 並附帶外發光效果，與可選課程形成強烈對比。
+    - **灰階效果增強**：將灰階濾鏡從 20% 提升至 60%，更清楚標示課程已無法選擇。
+    - **響應式設計**：使用 `clamp()` 確保標籤文字在不同螢幕尺寸都能清晰顯示。
