@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { isOwnCache, isOwnRegistration } from "../utils/ownCache";
 
 interface Props {
     children?: ReactNode;
@@ -24,14 +25,14 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     private handleReload = () => {
-        // Clear all caches and reload
+        // Clear this app's own caches and reload
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(registrations => {
-                registrations.forEach(registration => registration.unregister());
+                registrations.filter(isOwnRegistration).forEach(registration => registration.unregister());
             });
         }
         caches.keys().then((names) => {
-            names.forEach((name) => {
+            names.filter(isOwnCache).forEach((name) => {
                 caches.delete(name);
             });
         });

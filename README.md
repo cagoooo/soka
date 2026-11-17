@@ -2,7 +2,9 @@
 
 🌐 **線上使用：[創價・教育 EXPO 線上選課](https://cagoooo.github.io/soka/)**
 
-> 📌 **目前版本：v1.0.15**（依據 `package.json`）
+> 📌 **目前版本：v1.0.16**（依據 `package.json`）
+>
+> v1.0.16：立即更新／自我修復只清除本工具的快取與註冊，不再影響同網域其他工具
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

@@ -1,4 +1,5 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
+import { isOwnRegistration } from './ownCache';
 
 /**
  * A wrapper around React.lazy that reloads the page if the import fails.
@@ -30,7 +31,7 @@ export const lazyRetry = <T extends ComponentType<any>>(
                 // Aggressive cache clearing for PWA/SW
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistrations().then(registrations => {
-                        for (const registration of registrations) {
+                        for (const registration of registrations.filter(isOwnRegistration)) {
                             registration.unregister();
                         }
                         window.location.reload();
